@@ -3,9 +3,10 @@
 /// Each variant provides a mathematical transformation applied to the input
 /// value during propagation. More functions can be added in the future by
 /// extending this enum.
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, Default)]
 pub enum Activation {
     /// Returns the input unchanged.
+    #[default]
     Identity,
     /// Logistic sigmoid: `1 / (1 + e^{-x})`.
     Sigmoid,
@@ -25,11 +26,5 @@ impl Activation {
             Activation::ReLU => x.max(0.0),
             Activation::Tanh => x.tanh(),
         }
-    }
-}
-
-impl Default for Activation {
-    fn default() -> Self {
-        Activation::Identity
     }
 }
