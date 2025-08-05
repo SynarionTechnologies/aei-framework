@@ -47,6 +47,25 @@ use aei_framework::{Activation, Neuron};
 let neuron = Neuron::new(1, Activation::Tanh);
 ```
 
+## Example: Multi-Activation Network
+
+```rust
+use aei_framework::{activation::Activation, network::Network};
+
+let mut net = Network::new();
+let n1 = net.add_neuron_with_activation(Activation::Sigmoid);
+let n2 = net.add_neuron_with_activation(Activation::ReLU);
+net.add_synapse(n1, n2, 2.0);
+
+net.propagate(n1, 1.0);
+println!("Value of neuron {n1} (Sigmoid): {}", net.value(n1).unwrap());
+println!("Value of neuron {n2} (ReLU): {}", net.value(n2).unwrap());
+```
+
+Using varied activations lets each neuron process data differently. Combining
+smooth functions like `Sigmoid` with piecewise-linear ones like `ReLU` increases
+the representational power of the network.
+
 ## Propagation Flow
 
 `Network::propagate` performs a forward pass through the network in four

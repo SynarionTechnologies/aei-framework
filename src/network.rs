@@ -2,14 +2,17 @@ use std::collections::HashMap;
 
 use crate::{Activation, Neuron, Synapse};
 
-/// Manager for neurons and synapses.
+/// Dynamic collection of neurons and synapses forming a directed graph.
 ///
-/// The network allows adding neurons or synapses on the fly and
-/// propagating values through existing connections.
+/// A [`Network`] can be extended at runtime by adding neurons or synapses and
+/// supports propagating values through the existing connections.
 #[derive(Debug, Default)]
 pub struct Network {
+    /// All neurons indexed by their unique identifier.
     neurons: HashMap<usize, Neuron>,
+    /// Directed connections transferring weighted signals between neurons.
     synapses: Vec<Synapse>,
+    /// Identifier assigned to the next neuron added to the network.
     next_id: usize,
 }
 
@@ -20,11 +23,13 @@ impl Network {
     }
 
     /// Adds a neuron using the default [`Activation::Identity`].
+    ///
+    /// Returns the identifier assigned to the new neuron.
     pub fn add_neuron(&mut self) -> usize {
         self.add_neuron_with_activation(Activation::Identity)
     }
 
-    /// Adds a neuron with a specified activation function.
+    /// Adds a neuron with a specified activation function and returns its id.
     pub fn add_neuron_with_activation(&mut self, activation: Activation) -> usize {
         let id = self.next_id;
         self.next_id += 1;
@@ -32,29 +37,42 @@ impl Network {
         id
     }
 
-    /// Adds a directed synapse between two existing neurons.
+    /// Adds a directed synapse between two neuron identifiers.
     ///
-    /// # Panics
-    /// Panics if either neuron does not exist in the network.
+    /// If either identifier does not correspond to an existing neuron the
+    /// synapse is still recorded but will have no effect during propagation.
     pub fn add_synapse(&mut self, from: usize, to: usize, weight: f64) {
-        if !(self.neurons.contains_key(&from) && self.neurons.contains_key(&to)) {
-            panic!("nonexistent neuron");
-        }
         self.synapses.push(Synapse::new(from, to, weight));
     }
 
     /// Propagates a value through the network starting from `start`.
     ///
-    /// The propagation occurs in four phases:
+    /// # Propagation sequence
+    /// 1. **Reset** – all neuron values are cleared to `0.0`.
+    /// 2. **Source activation** – the input `value` is transformed by the source
+    ///    neuron's activation function.
+    /// 3. **Weighting** – each synapse transmits `from_value * weight` to its
+    ///    target neuron.
+    /// 4. **Activation** – once all sums are collected, every target neuron
+    ///    applies its activation function.
     ///
-    /// 1. **Reset** – all neuron values are cleared to `0.0` to avoid
-    ///    accumulating results from previous runs.
-    /// 2. **Source activation** – the provided `value` is passed through the
-    ///    activation function of the source neuron.
-    /// 3. **Weighted propagation** – each synapse contributes
-    ///    `from_value * weight` to the target neuron.
-    /// 4. **Activation** – once all sums are collected, every neuron (except the
-    ///    source) applies its own activation function to its accumulated input.
+    /// # Edge cases
+    /// - If the source neuron does not exist, the propagation stops immediately.
+    /// - Synapses referencing missing neurons are ignored.
+    /// - Orphan synapses (whose source neuron is absent) never fire.
+    /// - The reset step guarantees that consecutive propagations are
+    ///   independent.
+    ///
+    /// # Example
+    /// ```
+    /// use aei_framework::{activation::Activation, network::Network};
+    ///
+    /// let mut net = Network::new();
+    /// let a = net.add_neuron_with_activation(Activation::Sigmoid);
+    /// let b = net.add_neuron_with_activation(Activation::ReLU);
+    /// net.add_synapse(a, b, 2.0);
+    /// net.propagate(a, 1.0);
+    /// ```
     pub fn propagate(&mut self, start: usize, value: f64) {
         use std::collections::VecDeque;
 
