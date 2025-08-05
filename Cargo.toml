@@ -2,7 +2,7 @@
 name = "aei-framework"
 version = "0.1.0"
 edition = "2021"
-description = "Root crate for the Autonomous & Evolutive Intelligence Framework workspace."
+description = "Core of the AEI Framework for dynamic neural networks."
 license = "MPL-2.0"
 publish = false
 

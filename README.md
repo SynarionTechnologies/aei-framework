@@ -1,59 +1,46 @@
-# Autonomous & Evolutive Intelligence Framework (AEIF)
+# AEI Framework (AEIF)
 
-AEIF is an open, modular Rust framework for building evolutive, autonomous AI agents — **Autonomous Conscious Units (ACUs)**.  
-It promotes transparent, reproducible research by allowing developers to mix and match memory layers, knowledge modules, and runtime environments.
+[![Build](https://img.shields.io/badge/build-passing-brightgreen)](https://github.com/owner/aei-framework/actions)
+[![License: MPL-2.0](https://img.shields.io/badge/license-MPL%202.0-blue)](LICENSE)
 
-## Project structure
+AEI Framework is an open source Rust framework for building dynamic, modular, scalable, embeddable, and multi-agent neural networks.
 
+## Goals
+
+- Modify the network structure at runtime.
+- Add or remove neurons and synapses on the fly.
+- Provide a simple and well-documented API.
+
+## Quick Example
+
+```rust
+use aei_framework::Network;
+
+fn main() {
+    let mut net = Network::new();
+    let a = net.add_neuron();
+    let b = net.add_neuron();
+    net.add_synapse(a, b, 0.5);
+    net.propagate(a, 2.0);
+    println!("Value of neuron b: {:?}", net.value(b));
+}
 ```
-aei-framework/
-├── crates/
-│   ├── core/        # Core traits and types for ACUs
-│   ├── memory/      # Persistence and memory abstraction
-│   ├── runtime/     # Agent orchestration and scheduling
-│   ├── modules/     # Plug-and-play knowledge modules
-│   └── utils/       # Shared utilities
-├── examples/        # Example binaries
-├── tests/           # Integration tests
-├── README.md        # Project overview
-├── Cargo.toml       # Workspace configuration
-└── .gitignore
-```
 
-## Getting started
-
-You can use Cargo directly or the provided Makefile for common development tasks.
+## Development
 
 ```bash
-# Build the entire workspace
-cargo build
-
-# Run tests
-cargo test
-
-# Run an example
-cargo run --example basic
-
-# Format, lint and test using the Makefile
-make ci
+cargo build    # Build the project
+cargo test     # Run the test suite
 ```
-
-## Crates
-
-- `core`: foundational traits and abstractions for ACUs.
-- `memory`: persistence and memory layer interfaces.
-- `runtime`: agent runtime and scheduling infrastructure.
-- `modules`: plug-and-play knowledge modules.
-- `utils`: shared utilities used across the workspace.
 
 ## Contributing
 
-AEIF welcomes contributions from researchers and developers. Feel free to open issues and pull requests.
+Contributions are welcome! Please read [CONTRIBUTING.md](CONTRIBUTING.md) before submitting changes.
 
-GitHub Actions runs `make ci` on pushes and pull requests targeting `main` to ensure the workspace builds and tests successfully.
+## Changelog
 
-See [CHANGELOG.md](CHANGELOG.md) for a list of notable changes.
+See [CHANGELOG.md](CHANGELOG.md) for the list of changes.
 
 ## License
 
-Distributed under the terms of the Mozilla Public License 2.0 (MPL-2.0). See the [LICENSE](LICENSE) file for details.
+Distributed under the Mozilla Public License 2.0. See [LICENSE](LICENSE) for more information.
