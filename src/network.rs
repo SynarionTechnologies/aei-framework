@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 
-use crate::{Neuron, Synapse};
+use crate::{Activation, Neuron, Synapse};
 
 /// Manager for neurons and synapses.
 ///
@@ -19,11 +19,16 @@ impl Network {
         Self::default()
     }
 
-    /// Adds a neuron and returns its unique identifier.
+    /// Adds a neuron using the default [`Activation::Identity`].
     pub fn add_neuron(&mut self) -> usize {
+        self.add_neuron_with_activation(Activation::Identity)
+    }
+
+    /// Adds a neuron with a specified activation function.
+    pub fn add_neuron_with_activation(&mut self, activation: Activation) -> usize {
         let id = self.next_id;
         self.next_id += 1;
-        self.neurons.insert(id, Neuron::new(id));
+        self.neurons.insert(id, Neuron::new(id, activation));
         id
     }
 
@@ -40,11 +45,11 @@ impl Network {
 
     /// Propagates a value from a source neuron.
     ///
-    /// Propagation follows directed synapses and applies successive weights.
-    /// Each neuron uses the identity activation function.
+    /// Propagation follows directed synapses, applying weights and activation
+    /// functions at each step.
     pub fn propagate(&mut self, start: usize, value: f64) {
         if let Some(n) = self.neurons.get_mut(&start) {
-            n.value = value;
+            n.value = n.activation.apply(value);
         } else {
             return;
         }
@@ -54,12 +59,13 @@ impl Network {
         while let Some(id) = stack.pop() {
             let current = {
                 let n = self.neurons.get(&id).unwrap();
-                n.activation()
+                n.value
             };
 
             for s in synapses.iter().filter(|s| s.from == id) {
                 if let Some(neuron) = self.neurons.get_mut(&s.to) {
-                    neuron.value = current * s.weight;
+                    let weighted = current * s.weight;
+                    neuron.value = neuron.activation.apply(weighted);
                 }
                 stack.push(s.to);
             }
