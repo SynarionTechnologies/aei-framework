@@ -1,5 +1,10 @@
 //! Dynamic neural network composed of neurons and synapses.
 
+type EdgeList = Vec<Vec<(usize, usize)>>;
+type NodeList = Vec<usize>;
+type TopoOrder = Vec<usize>;
+type GraphStructure = (EdgeList, EdgeList, NodeList, NodeList, TopoOrder);
+
 use std::collections::{HashMap, VecDeque};
 
 use crate::{Activation, Neuron, Synapse};
@@ -174,9 +179,9 @@ impl Network {
             }
         }
 
-        for id in 0..self.next_id {
+        for (id, &v) in values.iter().enumerate().take(self.next_id) {
             if let Some(n) = self.neurons.get_mut(&id) {
-                n.value = values[id];
+                n.value = v;
             }
         }
 
@@ -258,7 +263,7 @@ impl Network {
                     syn.weight -= learning_rate * grad;
                 }
 
-                for id in 0..self.next_id {
+                for (id, &_v) in values.iter().enumerate().take(self.next_id) {
                     if let Some(n) = self.neurons.get_mut(&id) {
                         n.value = values[id];
                     }
@@ -278,15 +283,7 @@ impl Network {
     /// pairs for edges leaving `id`, `input_ids` are neurons with no incoming
     /// edges, `output_ids` are neurons with no outgoing edges and `order` is a
     /// topological ordering of all neurons.
-    fn graph_structure(
-        &self,
-    ) -> (
-        Vec<Vec<(usize, usize)>>,
-        Vec<Vec<(usize, usize)>>,
-        Vec<usize>,
-        Vec<usize>,
-        Vec<usize>,
-    ) {
+    fn graph_structure(&self) -> GraphStructure {
         let num_neurons = self.next_id;
         let mut incoming = vec![Vec::new(); num_neurons];
         let mut outgoing = vec![Vec::new(); num_neurons];
