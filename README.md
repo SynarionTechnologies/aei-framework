@@ -28,6 +28,43 @@ fn main() {
 }
 ```
 
+## Advanced Example
+
+Create a small network with heterogeneous activations and observe the
+propagation of a value through the chain of neurons.
+
+```rust
+use aei_framework::{Activation, Network};
+
+let mut net = Network::new();
+let input = net.add_neuron_with_activation(Activation::Identity);
+let hidden = net.add_neuron_with_activation(Activation::ReLU);
+let output = net.add_neuron_with_activation(Activation::Tanh);
+net.add_synapse(input, hidden, 0.5);
+net.add_synapse(hidden, output, 1.0);
+
+// Propagate once from the input neuron.
+net.propagate(input, 1.0);
+
+println!("Hidden neuron value: {}", net.value(hidden).unwrap());
+println!("Output neuron value: {}", net.value(output).unwrap());
+```
+
+## Step-by-Step Propagation
+
+`Network::propagate` performs four ordered phases:
+
+1. **Reset** – every neuron's value is cleared to `0.0`.
+2. **Source activation** – the input value is passed through the source
+   neuron's activation function.
+3. **Weighted propagation** – synapses contribute `from_value * weight` to
+   their targets.
+4. **Activation** – each target neuron applies its activation function once all
+   inputs have been received.
+
+This deterministic sequence ensures that repeated calls do not accumulate
+state and that activations are applied only after all inputs are processed.
+
 ## Activation Functions
 
 Neurons support several activation functions:
@@ -101,3 +138,10 @@ See [CHANGELOG.md](CHANGELOG.md) for the list of changes.
 ## License
 
 Distributed under the Mozilla Public License 2.0. See [LICENSE](LICENSE) for more information.
+
+## Known Limitations
+
+- Neuron identifiers are numeric and local to a network. Each neuron now also
+  stores a `Uuid` but it is not yet used as the primary key.
+- No persistence or serialization layer is currently provided.
+- Layered abstractions and neuron removal are planned but not implemented.
