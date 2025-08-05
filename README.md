@@ -50,6 +50,41 @@ println!("Hidden neuron value: {}", net.value(hidden).unwrap());
 println!("Output neuron value: {}", net.value(output).unwrap());
 ```
 
+## Learning XOR
+
+Train a small network to approximate the XOR truth table using
+backpropagation:
+
+```rust
+use aei_framework::{Activation, Network};
+
+let mut net = Network::new();
+let i1 = net.add_neuron_with_activation(Activation::Identity);
+let i2 = net.add_neuron_with_activation(Activation::Identity);
+let h1 = net.add_neuron_with_activation(Activation::Sigmoid);
+let h2 = net.add_neuron_with_activation(Activation::Sigmoid);
+let o = net.add_neuron_with_activation(Activation::Sigmoid);
+
+net.add_synapse(i1, h1, 0.5);
+net.add_synapse(i1, h2, -0.5);
+net.add_synapse(i2, h1, -0.5);
+net.add_synapse(i2, h2, 0.5);
+net.add_synapse(h1, o, 0.5);
+net.add_synapse(h2, o, 0.5);
+
+let dataset = [
+    (vec![0.0, 0.0], vec![0.0]),
+    (vec![0.0, 1.0], vec![1.0]),
+    (vec![1.0, 0.0], vec![1.0]),
+    (vec![1.0, 1.0], vec![0.0]),
+];
+
+net.train(&dataset, 10_000, 0.5);
+
+let output = net.predict(&[0.0, 1.0])[0];
+println!("XOR(0,1) ≈ {output}");
+```
+
 ## Step-by-Step Propagation
 
 `Network::propagate` performs four ordered phases:
