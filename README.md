@@ -22,6 +22,8 @@ aei-framework/
 
 ## Getting started
 
+You can use Cargo directly or the provided Makefile for common development tasks.
+
 ```bash
 # Build the entire workspace
 cargo build
@@ -31,6 +33,9 @@ cargo test
 
 # Run an example
 cargo run --example basic
+
+# Format, lint and test using the Makefile
+make ci
 ```
 
 ## Crates
@@ -44,6 +49,10 @@ cargo run --example basic
 ## Contributing
 
 AEIF welcomes contributions from researchers and developers. Feel free to open issues and pull requests.
+
+GitHub Actions runs `make ci` on pushes and pull requests targeting `main` to ensure the workspace builds and tests successfully.
+
+See [CHANGELOG.md](CHANGELOG.md) for a list of notable changes.
 
 ## License
 
