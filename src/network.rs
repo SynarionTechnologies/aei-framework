@@ -97,8 +97,7 @@ impl Network {
 
         // Track how many inputs each neuron expects so we know when to apply
         // the activation function.
-        let mut in_deg: HashMap<usize, usize> =
-            self.neurons.keys().map(|&k| (k, 0usize)).collect();
+        let mut in_deg: HashMap<usize, usize> = self.neurons.keys().map(|&k| (k, 0usize)).collect();
         for s in &self.synapses {
             if let Some(d) = in_deg.get_mut(&s.to) {
                 *d += 1;
