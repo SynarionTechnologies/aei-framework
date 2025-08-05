@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### Added
+- Backpropagation training with `Network::train` and `Network::predict`
+- Activation function derivatives enabling gradient descent
+- XOR example, tests, and README tutorial
 - Makefile with common development tasks
 - GitHub Actions workflow running `make ci`
 - Initial changelog

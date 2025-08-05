@@ -27,4 +27,24 @@ impl Activation {
             Activation::Tanh => x.tanh(),
         }
     }
+
+    /// Returns the derivative of the activation function given its output.
+    ///
+    /// The derivative is expressed in terms of the already activated output in
+    /// order to avoid recomputing the forward pass during backpropagation.
+    #[must_use]
+    pub fn derivative(self, activated: f64) -> f64 {
+        match self {
+            Activation::Identity => 1.0,
+            Activation::Sigmoid => activated * (1.0 - activated),
+            Activation::ReLU => {
+                if activated > 0.0 {
+                    1.0
+                } else {
+                    0.0
+                }
+            }
+            Activation::Tanh => 1.0 - activated * activated,
+        }
+    }
 }
