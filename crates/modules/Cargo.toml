@@ -1,0 +1,8 @@
+[package]
+name = "aei-modules"
+version = "0.1.0"
+edition = "2021"
+description = "Plug-and-play knowledge modules for ACUs."
+license = "MPL-2.0"
+
+[dependencies]
