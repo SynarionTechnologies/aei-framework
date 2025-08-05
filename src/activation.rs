@@ -1,8 +1,8 @@
-/// Defines activation functions available for neurons.
-///
-/// Each variant provides a mathematical transformation applied to the input
-/// value during propagation. More functions can be added in the future by
-/// extending this enum.
+//! Activation functions available for neurons.
+//!
+//! Each variant provides a mathematical transformation applied to the input
+//! value during propagation. More functions can be added in the future by
+//! extending this enum.
 #[derive(Debug, Clone, Copy, Default)]
 pub enum Activation {
     /// Returns the input unchanged.

@@ -1,3 +1,5 @@
+//! Dynamic neural network composed of neurons and synapses.
+
 use std::collections::HashMap;
 
 use crate::{Activation, Neuron, Synapse};
@@ -9,6 +11,9 @@ use crate::{Activation, Neuron, Synapse};
 #[derive(Debug, Default)]
 pub struct Network {
     /// All neurons indexed by their unique identifier.
+    ///
+    /// TODO: migrate to `Uuid` once `Neuron` identifiers switch to globally
+    /// unique values.
     neurons: HashMap<usize, Neuron>,
     /// Directed connections transferring weighted signals between neurons.
     synapses: Vec<Synapse>,
@@ -90,17 +95,20 @@ impl Network {
             None => return,
         };
 
-        // Pre-compute the number of incoming synapses for each neuron. This is
-        // required so we only activate a neuron after all of its inputs have
-        // been processed.
-        let mut in_deg: HashMap<usize, usize> = self.neurons.keys().map(|&k| (k, 0usize)).collect();
+        // Track how many inputs each neuron expects so we know when to apply
+        // the activation function.
+        let mut in_deg: HashMap<usize, usize> =
+            self.neurons.keys().map(|&k| (k, 0usize)).collect();
         for s in &self.synapses {
             if let Some(d) = in_deg.get_mut(&s.to) {
                 *d += 1;
             }
         }
 
-        // 3. Propagate weighted sums through the synapses using a queue.
+        // Accumulate weighted sums until all inputs of a neuron are processed.
+        let mut sums: HashMap<usize, f64> = HashMap::new();
+
+        // 3. Propagate weighted values.
         let mut queue = VecDeque::from([start_neuron]);
         while let Some(id) = queue.pop_front() {
             let from_value = match self.neurons.get(&id) {
@@ -109,19 +117,18 @@ impl Network {
             };
 
             for syn in self.synapses.iter().filter(|s| s.from == id) {
-                let weighted = from_value * syn.weight;
-                if let Some(target) = self.neurons.get_mut(&syn.to) {
-                    target.value += weighted;
+                if !self.neurons.contains_key(&syn.to) {
+                    continue;
                 }
+                *sums.entry(syn.to).or_insert(0.0) += from_value * syn.weight;
 
-                // Decrease the remaining input count and, if all inputs are
-                // processed, apply the activation and enqueue the neuron so its
-                // outputs can be propagated further.
                 if let Some(d) = in_deg.get_mut(&syn.to) {
                     *d -= 1;
                     if *d == 0 {
-                        if let Some(n) = self.neurons.get_mut(&syn.to) {
-                            n.value = n.activation.apply(n.value);
+                        if let Some(sum) = sums.remove(&syn.to) {
+                            if let Some(n) = self.neurons.get_mut(&syn.to) {
+                                n.value = n.activation.apply(sum);
+                            }
                         }
                         queue.push_back(syn.to);
                     }

@@ -15,3 +15,6 @@ members = [
     "crates/utils",
 ]
 resolver = "2"
+
+[dependencies]
+uuid = { version = "1", features = ["v4"] }

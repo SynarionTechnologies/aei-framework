@@ -1,7 +1,7 @@
-/// Represents a synapse connecting two neurons.
-///
-/// A synapse carries the value from a source neuron to a target neuron,
-/// multiplying it by a weight.
+//! Synapse connecting two neurons.
+//!
+//! A synapse carries the value from a source neuron to a target neuron,
+//! multiplying it by a weight.
 #[derive(Debug, Clone)]
 pub struct Synapse {
     /// Identifier of the source neuron.

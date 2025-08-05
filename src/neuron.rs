@@ -1,4 +1,7 @@
+//! Representation of neurons within a [`Network`].
+
 use crate::Activation;
+use uuid::Uuid;
 
 /// Represents a neuron within the network.
 ///
@@ -8,6 +11,11 @@ use crate::Activation;
 pub struct Neuron {
     /// Unique identifier of the neuron.
     pub id: usize,
+    /// Globally unique identifier.
+    ///
+    /// TODO: replace `id` usages with this `uuid` to avoid collisions and to
+    /// support serialization across processes.
+    pub uuid: Uuid,
     /// Current output value of the neuron (after activation).
     pub value: f64,
     /// Activation function used by this neuron.
@@ -21,6 +29,7 @@ impl Neuron {
     pub fn new(id: usize, activation: Activation) -> Self {
         Self {
             id,
+            uuid: Uuid::new_v4(),
             value: 0.0,
             activation,
         }
