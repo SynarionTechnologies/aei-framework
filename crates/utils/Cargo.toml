@@ -1,0 +1,8 @@
+[package]
+name = "aei-utils"
+version = "0.1.0"
+edition = "2021"
+description = "Shared utilities for the AEIF workspace."
+license = "MPL-2.0"
+
+[dependencies]

@@ -1,0 +1,8 @@
+[package]
+name = "aei-core"
+version = "0.1.0"
+edition = "2021"
+description = "Core of the Autonomous & Evolutive Intelligence Framework."
+license = "MPL-2.0"
+
+[dependencies]
