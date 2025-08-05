@@ -1,47 +1,71 @@
 use aei_framework::{Activation, Network};
 
-/// Checks the propagation of a value through a network using the identity activation.
-#[test]
-fn simple_propagation() {
-    let mut net = Network::new();
-    let a = net.add_neuron();
-    let b = net.add_neuron();
-    net.add_synapse(a, b, 0.5);
-    net.propagate(a, 2.0);
-    assert_eq!(net.value(b), Some(1.0));
+// Helper function for floating point comparisons.
+fn approx_eq(a: f64, b: f64) -> bool {
+    (a - b).abs() < 1e-6
 }
 
-/// Ensures the sigmoid activation is applied to the target neuron.
+/// Ensures propagation applies activations in order and resets neuron values
+/// between runs.
 #[test]
-fn sigmoid_activation() {
+fn propagation_with_activation_and_reset() {
     let mut net = Network::new();
-    let a = net.add_neuron();
-    let b = net.add_neuron_with_activation(Activation::Sigmoid);
-    net.add_synapse(a, b, 1.0);
-    net.propagate(a, 0.0);
-    let out = net.value(b).unwrap();
-    assert!((out - 0.5).abs() < 1e-6);
+    let input = net.add_neuron_with_activation(Activation::Sigmoid);
+    let output = net.add_neuron_with_activation(Activation::ReLU);
+    net.add_synapse(input, output, 2.0);
+
+    // First propagation
+    net.propagate(input, 1.0);
+    let expected_in = Activation::Sigmoid.apply(1.0);
+    let expected_out = Activation::ReLU.apply(expected_in * 2.0);
+    assert!(approx_eq(net.value(input).unwrap(), expected_in));
+    assert!(approx_eq(net.value(output).unwrap(), expected_out));
+
+    // Second propagation with a different value to ensure reset
+    net.propagate(input, 0.0);
+    let expected_in2 = Activation::Sigmoid.apply(0.0);
+    let expected_out2 = Activation::ReLU.apply(expected_in2 * 2.0);
+    assert!(approx_eq(net.value(input).unwrap(), expected_in2));
+    assert!(approx_eq(net.value(output).unwrap(), expected_out2));
 }
 
-/// Ensures the ReLU activation is applied to the target neuron.
+/// Propagation where the source neuron uses ReLU and the target Identity.
 #[test]
-fn relu_activation() {
+fn propagation_with_relu_source() {
     let mut net = Network::new();
-    let a = net.add_neuron();
-    let b = net.add_neuron_with_activation(Activation::ReLU);
-    net.add_synapse(a, b, 1.0);
-    net.propagate(a, -1.0);
-    assert_eq!(net.value(b), Some(0.0));
+    let input = net.add_neuron_with_activation(Activation::ReLU);
+    let output = net.add_neuron(); // Identity
+    net.add_synapse(input, output, 1.0);
+
+    net.propagate(input, -1.0);
+    assert_eq!(net.value(input), Some(0.0));
+    assert_eq!(net.value(output), Some(0.0));
 }
 
-/// Ensures the tanh activation is applied to the target neuron.
+/// Propagation where the source neuron uses Tanh.
 #[test]
-fn tanh_activation() {
+fn propagation_with_tanh_source() {
     let mut net = Network::new();
-    let a = net.add_neuron();
-    let b = net.add_neuron_with_activation(Activation::Tanh);
-    net.add_synapse(a, b, 1.0);
-    net.propagate(a, 1.0);
-    let out = net.value(b).unwrap();
-    assert!((out - 1.0f64.tanh()).abs() < 1e-6);
+    let input = net.add_neuron_with_activation(Activation::Tanh);
+    let output = net.add_neuron(); // Identity
+    net.add_synapse(input, output, 1.0);
+
+    net.propagate(input, 1.0);
+    let expected = Activation::Tanh.apply(1.0);
+    assert!(approx_eq(net.value(input).unwrap(), expected));
+    assert!(approx_eq(net.value(output).unwrap(), expected));
+}
+
+/// Propagation where the target neuron uses Sigmoid.
+#[test]
+fn propagation_with_sigmoid_target() {
+    let mut net = Network::new();
+    let input = net.add_neuron(); // Identity
+    let output = net.add_neuron_with_activation(Activation::Sigmoid);
+    net.add_synapse(input, output, 1.0);
+
+    net.propagate(input, 1.0);
+    let expected_out = Activation::Sigmoid.apply(1.0);
+    assert_eq!(net.value(input), Some(1.0));
+    assert!(approx_eq(net.value(output).unwrap(), expected_out));
 }

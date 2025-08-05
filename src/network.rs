@@ -43,31 +43,71 @@ impl Network {
         self.synapses.push(Synapse::new(from, to, weight));
     }
 
-    /// Propagates a value from a source neuron.
+    /// Propagates a value through the network starting from `start`.
     ///
-    /// Propagation follows directed synapses, applying weights and activation
-    /// functions at each step.
+    /// The propagation occurs in four phases:
+    ///
+    /// 1. **Reset** – all neuron values are cleared to `0.0` to avoid
+    ///    accumulating results from previous runs.
+    /// 2. **Source activation** – the provided `value` is passed through the
+    ///    activation function of the source neuron.
+    /// 3. **Weighted propagation** – each synapse contributes
+    ///    `from_value * weight` to the target neuron.
+    /// 4. **Activation** – once all sums are collected, every neuron (except the
+    ///    source) applies its own activation function to its accumulated input.
     pub fn propagate(&mut self, start: usize, value: f64) {
-        if let Some(n) = self.neurons.get_mut(&start) {
-            n.value = n.activation.apply(value);
-        } else {
-            return;
+        use std::collections::VecDeque;
+
+        // 1. Reset all neuron values.
+        for neuron in self.neurons.values_mut() {
+            neuron.value = 0.0;
         }
 
-        let synapses = self.synapses.clone();
-        let mut stack = vec![start];
-        while let Some(id) = stack.pop() {
-            let current = {
-                let n = self.neurons.get(&id).unwrap();
-                n.value
+        // 2. Activate the source neuron with the incoming value.
+        let start_neuron = match self.neurons.get_mut(&start) {
+            Some(n) => {
+                n.value = n.activation.apply(value);
+                n.id
+            }
+            None => return,
+        };
+
+        // Pre-compute the number of incoming synapses for each neuron. This is
+        // required so we only activate a neuron after all of its inputs have
+        // been processed.
+        let mut in_deg: HashMap<usize, usize> = self.neurons.keys().map(|&k| (k, 0usize)).collect();
+        for s in &self.synapses {
+            if let Some(d) = in_deg.get_mut(&s.to) {
+                *d += 1;
+            }
+        }
+
+        // 3. Propagate weighted sums through the synapses using a queue.
+        let mut queue = VecDeque::from([start_neuron]);
+        while let Some(id) = queue.pop_front() {
+            let from_value = match self.neurons.get(&id) {
+                Some(n) => n.value,
+                None => continue,
             };
 
-            for s in synapses.iter().filter(|s| s.from == id) {
-                if let Some(neuron) = self.neurons.get_mut(&s.to) {
-                    let weighted = current * s.weight;
-                    neuron.value = neuron.activation.apply(weighted);
+            for syn in self.synapses.iter().filter(|s| s.from == id) {
+                let weighted = from_value * syn.weight;
+                if let Some(target) = self.neurons.get_mut(&syn.to) {
+                    target.value += weighted;
                 }
-                stack.push(s.to);
+
+                // Decrease the remaining input count and, if all inputs are
+                // processed, apply the activation and enqueue the neuron so its
+                // outputs can be propagated further.
+                if let Some(d) = in_deg.get_mut(&syn.to) {
+                    *d -= 1;
+                    if *d == 0 {
+                        if let Some(n) = self.neurons.get_mut(&syn.to) {
+                            n.value = n.activation.apply(n.value);
+                        }
+                        queue.push_back(syn.to);
+                    }
+                }
             }
         }
     }

@@ -47,6 +47,23 @@ use aei_framework::{Activation, Neuron};
 let neuron = Neuron::new(1, Activation::Tanh);
 ```
 
+## Propagation Flow
+
+`Network::propagate` performs a forward pass through the network in four
+ordered steps:
+
+1. **Reset** – all neuron values are set to `0.0`, ensuring that consecutive
+   propagations do not interfere with each other.
+2. **Source activation** – the input value is passed through the activation
+   function of the source neuron.
+3. **Weighted propagation** – each synapse adds `from_value * weight` to the
+   target neuron's pending sum.
+4. **Activation** – after all sums have been collected, every neuron applies
+   its activation function to produce the new output.
+
+This sequence guarantees that each neuron is activated exactly once per
+propagation and that previous runs do not leak into the next one.
+
 ## Development
 
 ```bash
