@@ -14,16 +14,37 @@ AEI Framework is an open source Rust framework for building dynamic, modular, sc
 ## Quick Example
 
 ```rust
-use aei_framework::Network;
+use aei_framework::{Activation, Network};
 
 fn main() {
     let mut net = Network::new();
-    let a = net.add_neuron();
-    let b = net.add_neuron();
-    net.add_synapse(a, b, 0.5);
-    net.propagate(a, 2.0);
-    println!("Value of neuron b: {:?}", net.value(b));
+    let input = net.add_neuron(); // Uses the default identity activation
+    let hidden = net.add_neuron_with_activation(Activation::ReLU);
+    let output = net.add_neuron_with_activation(Activation::Sigmoid);
+    net.add_synapse(input, hidden, 1.0);
+    net.add_synapse(hidden, output, 1.0);
+    net.propagate(input, -0.5);
+    println!("Value of output neuron: {:?}", net.value(output));
 }
+```
+
+## Activation Functions
+
+Neurons support several activation functions:
+
+- `Identity`
+- `Sigmoid`
+- `ReLU`
+- `Tanh`
+
+By default, neurons use `Identity`. To create a neuron with a specific
+activation, either instantiate a [`Neuron`] directly or use
+`Network::add_neuron_with_activation`:
+
+```rust
+use aei_framework::{Activation, Neuron};
+
+let neuron = Neuron::new(1, Activation::Tanh);
 ```
 
 ## Development
