@@ -39,7 +39,7 @@ fn test_chained_propagation() {
 
     let expected_a = 1.0 / (1.0 + (-1.0f64).exp());
     let expected_b = (expected_a * 2.0).max(0.0);
-    let expected_c = (expected_b * -1.0).tanh();
+    let expected_c = -expected_b.tanh();
 
     assert!(approx_eq(net.value(a).unwrap(), expected_a));
     assert!(approx_eq(net.value(b).unwrap(), expected_b));
