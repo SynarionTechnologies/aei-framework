@@ -9,4 +9,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Makefile with common development tasks
 - GitHub Actions workflow running `make ci` for formatting, linting, and tests
-- Initial changelog and README updates
+- Add initial changelog
+- Add README.md
