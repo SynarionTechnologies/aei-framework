@@ -70,6 +70,24 @@ let result = net.get_outputs();
 println!("Result: {:?}", result.get("out"));
 ```
 
+## Serialization
+
+Persist networks to disk and load them back later using JSON:
+
+```rust
+use aei_framework::{Activation, Network};
+use std::path::Path;
+
+let mut net = Network::new();
+let a = net.add_input_neuron("a", Activation::Identity);
+let b = net.add_output_neuron("b", Activation::Identity);
+net.add_synapse(a, b, 1.0);
+
+let path = Path::new("network.json");
+net.save_json(path).unwrap();
+let restored = Network::load_json(path).unwrap();
+```
+
 ## Identifiers
 
 Every neuron and synapse receives a random [`Uuid`](https://docs.rs/uuid) when
@@ -233,5 +251,5 @@ Distributed under the Mozilla Public License 2.0. See [LICENSE](LICENSE) for mor
 
 - Neuron and synapse identifiers use `Uuid`. Networks serialized with older
   numeric identifiers are not supported.
-- No persistence or serialization layer is currently provided.
+- JSON persistence is available via `save_json` and `load_json`.
 - Layered abstractions and neuron removal are planned but not implemented.

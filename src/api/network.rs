@@ -6,6 +6,11 @@ type TopoOrder = Vec<usize>;
 type GraphStructure = (EdgeList, EdgeList, NodeList, NodeList, TopoOrder);
 
 use std::collections::{HashMap, VecDeque};
+use std::fs::File;
+use std::io;
+use std::path::Path;
+
+use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
 use crate::core::{Activation, Neuron, Synapse};
@@ -14,11 +19,12 @@ use crate::core::{Activation, Neuron, Synapse};
 ///
 /// A [`Network`] can be extended at runtime by adding neurons or synapses and
 /// supports propagating values through the existing connections.
-#[derive(Debug, Default)]
+#[derive(Debug, Default, Serialize, Deserialize)]
 pub struct Network {
     /// All neurons stored contiguously.
     neurons: Vec<Neuron>,
     /// Map from neuron [`Uuid`] to its index within `neurons`.
+    #[serde(skip)]
     neuron_indices: HashMap<Uuid, usize>,
     /// Directed connections transferring weighted signals between neurons.
     synapses: Vec<Synapse>,
@@ -31,6 +37,7 @@ pub struct Network {
     /// Ordered list of output neuron ids for index-based access.
     output_order: Vec<Uuid>,
     /// Temporary storage for values set through [`set_inputs`] before propagation.
+    #[serde(skip)]
     input_buffer: HashMap<Uuid, f64>,
 }
 
@@ -38,6 +45,32 @@ impl Network {
     /// Creates an empty network.
     pub fn new() -> Self {
         Self::default()
+    }
+
+    /// Saves the network as pretty JSON to the specified file path.
+    pub fn save_json<P: AsRef<Path>>(&self, path: P) -> io::Result<()> {
+        let file = File::create(path)?;
+        serde_json::to_writer_pretty(file, self)
+            .map_err(|e| io::Error::new(io::ErrorKind::Other, e))
+    }
+
+    /// Loads a network from a JSON file created by [`save_json`].
+    pub fn load_json<P: AsRef<Path>>(path: P) -> io::Result<Self> {
+        let file = File::open(path)?;
+        let mut net: Network =
+            serde_json::from_reader(file).map_err(|e| io::Error::new(io::ErrorKind::Other, e))?;
+        net.rebuild_indices();
+        Ok(net)
+    }
+
+    fn rebuild_indices(&mut self) {
+        self.neuron_indices = self
+            .neurons
+            .iter()
+            .enumerate()
+            .map(|(i, n)| (n.id, i))
+            .collect();
+        self.input_buffer.clear();
     }
 
     /// Adds a neuron using the default [`Activation::Identity`].

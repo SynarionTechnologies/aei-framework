@@ -3,7 +3,9 @@
 //! Each variant provides a mathematical transformation applied to the input
 //! value during propagation. More functions can be added in the future by
 //! extending this enum.
-#[derive(Debug, Clone, Copy, Default)]
+use serde::{Deserialize, Serialize};
+
+#[derive(Debug, Clone, Copy, Default, Serialize, Deserialize)]
 pub enum Activation {
     /// Returns the input unchanged.
     #[default]

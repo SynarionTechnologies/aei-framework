@@ -70,6 +70,24 @@ let result = net.get_outputs();
 println!("Result: {:?}", result.get("out"));
 ```
 
+## Sérialisation
+
+Persistez les réseaux sur disque et rechargez-les ensuite en JSON :
+
+```rust
+use aei_framework::{Activation, Network};
+use std::path::Path;
+
+let mut net = Network::new();
+let a = net.add_input_neuron("a", Activation::Identity);
+let b = net.add_output_neuron("b", Activation::Identity);
+net.add_synapse(a, b, 1.0);
+
+let path = Path::new("network.json");
+net.save_json(path).unwrap();
+let restored = Network::load_json(path).unwrap();
+```
+
 ## Identificateurs
 
 Chaque neurone et synapse reçoit un [`uuid`] aléatoire (https://docs.rs/uuid) quand
@@ -231,7 +249,6 @@ Distribué sous la licence publique de Mozilla 2.0.
 
 ## Limitations connues
 
-- Les identificateurs de neurones et de synapses utilisent «uuid». 
-Les identifiants numériques ne sont pas pris en charge.
-- Aucune couche de persistance ou de sérialisation n'est actuellement fournie.
+- Les identificateurs de neurones et de synapses utilisent `Uuid`. Les réseaux sérialisés avec d'anciens identifiants numériques ne sont pas pris en charge.
+- La persistance JSON est disponible via `save_json` et `load_json`.
 - Les abstractions en couches et l'élimination des neurones sont planifiées mais non mises en œuvre.

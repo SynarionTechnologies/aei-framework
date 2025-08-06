@@ -3,9 +3,10 @@
 //! A synapse carries the value from a source neuron to a target neuron,
 //! multiplying it by a weight.
 
+use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Synapse {
     /// Globally unique identifier of the synapse.
     pub id: Uuid,
