@@ -22,6 +22,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `propagate_inputs` APIs
 - JSON serialization and loading for networks via `save_json` and `load_json`
 - Structured logging of training progress via the `log` crate.
+- Random neuron creation with `Network::add_random_neuron` generating automatic
+  connections.
 ### Changed
 - Propagation logic now applies activations after weighted sums and resets all
   neuron values between runs.
