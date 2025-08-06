@@ -22,10 +22,10 @@ fn main() {
         (vec![1.0, 1.0], vec![0.0]),
     ];
 
-    net.train(&dataset, 10000, 0.5);
+    net.train(&dataset, 10000, 0.5).unwrap();
 
     for (inputs, _) in dataset.iter() {
-        let out = net.predict(inputs);
+        let out = net.predict(inputs).unwrap();
         println!("{:?} -> {:.3}", inputs, out[0]);
     }
 }

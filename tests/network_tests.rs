@@ -67,6 +67,19 @@ fn test_orphan_synapse() {
     assert!(matches!(res, Err(NetworkError::UnknownNeuron)));
 }
 
+/// Detect cycles in the network structure.
+#[test]
+fn test_cycle_detection() {
+    let mut net = Network::new();
+    let a = net.add_neuron();
+    let b = net.add_neuron();
+    net.add_synapse(a, b, 1.0).unwrap();
+    net.add_synapse(b, a, 1.0).unwrap();
+
+    let res = net.predict(&[]);
+    assert!(matches!(res, Err(NetworkError::CycleDetected)));
+}
+
 /// Neuron identifiers remain stable through string serialization.
 #[test]
 fn test_uuid_round_trip() {
