@@ -25,5 +25,5 @@ fn add_random_neuron_creates_connection() {
         .find(|s| s["from"] == new_id.to_string() || s["to"] == new_id.to_string())
         .expect("no synapse for new neuron");
     let weight = syn["weight"].as_f64().unwrap();
-    assert!(weight >= -1.0 && weight <= 1.0);
+    assert!((-1.0..=1.0).contains(&weight));
 }
