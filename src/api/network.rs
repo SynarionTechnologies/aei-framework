@@ -160,6 +160,62 @@ impl Network {
         id
     }
 
+    /// Removes a random neuron that is neither an input nor an output.
+    ///
+    /// All synapses connected to the removed neuron are also deleted.
+    ///
+    /// Returns the identifier of the removed neuron or `None` if no
+    /// removable neuron exists.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use aei_framework::{Activation, Network};
+    ///
+    /// let mut net = Network::new();
+    /// net.add_input_neuron("in", Activation::Identity);
+    /// let hidden = net.add_neuron();
+    /// net.add_output_neuron("out", Activation::Identity);
+    /// assert_eq!(net.remove_random_neuron(), Some(hidden));
+    /// ```
+    pub fn remove_random_neuron(&mut self) -> Option<Uuid> {
+        let candidates: Vec<Uuid> = self
+            .neurons
+            .iter()
+            .map(|n| n.id)
+            .filter(|&id| {
+                !self.input_neurons.values().any(|&i| i == id)
+                    && !self.output_neurons.values().any(|&o| o == id)
+            })
+            .collect();
+
+        if candidates.is_empty() {
+            return None;
+        }
+
+        let mut rng = rand::thread_rng();
+        let id = *candidates.choose(&mut rng).unwrap();
+
+        // Remove all associated synapses.
+        self.synapses.retain(|s| s.from != id && s.to != id);
+
+        // Remove the neuron itself using swap_remove to keep contiguous storage.
+        if let Some(idx) = self.neuron_indices.remove(&id) {
+            self.neurons.swap_remove(idx);
+            if idx < self.neurons.len() {
+                let swapped_id = self.neurons[idx].id;
+                self.neuron_indices.insert(swapped_id, idx);
+            }
+        }
+
+        // Clean up any cached values.
+        self.input_order.retain(|&nid| nid != id);
+        self.output_order.retain(|&nid| nid != id);
+        self.input_buffer.remove(&id);
+
+        Some(id)
+    }
+
     /// Adds a neuron designated as an input with the given `name` and `activation`.
     ///
     /// Returns the internal identifier assigned to the new neuron.

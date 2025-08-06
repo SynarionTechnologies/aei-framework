@@ -83,6 +83,20 @@ let new_neuron_id = net.add_random_neuron();
 println!("Neurone ajouté : {new_neuron_id}");
 ```
 
+## Suppression aléatoire de neurone
+
+Réduisez le réseau en supprimant un neurone interne aléatoire ainsi que toutes ses connexions :
+
+```rust
+use aei_framework::Network;
+
+let mut net = Network::new();
+// ... initialiser le réseau ...
+if let Some(removed_id) = net.remove_random_neuron() {
+    println!("Neurone supprimé : {removed_id}");
+}
+```
+
 ## Sérialisation
 
 Persistez les réseaux sur disque et rechargez-les ensuite en JSON :
@@ -274,4 +288,4 @@ Distribué sous la licence publique de Mozilla 2.0.
 
 - Les identificateurs de neurones et de synapses utilisent `Uuid`. Les réseaux sérialisés avec d'anciens identifiants numériques ne sont pas pris en charge.
 - La persistance JSON est disponible via `save_json` et `load_json`.
-- Les abstractions en couches et l'élimination des neurones sont planifiées mais non mises en œuvre.
+- Les abstractions en couches sont planifiées mais non mises en œuvre.
