@@ -32,8 +32,8 @@ fn test_chained_propagation() {
     let a = net.add_neuron_with_activation(Activation::Sigmoid);
     let b = net.add_neuron_with_activation(Activation::ReLU);
     let c = net.add_neuron_with_activation(Activation::Tanh);
-    net.add_synapse(a, b, 2.0);
-    net.add_synapse(b, c, -1.0);
+    net.add_synapse(a, b, 2.0).unwrap();
+    net.add_synapse(b, c, -1.0).unwrap();
 
     net.propagate(a, 1.0);
 
@@ -51,7 +51,7 @@ fn test_no_accumulation() {
     let mut net = Network::new();
     let a = net.add_neuron_with_activation(Activation::Sigmoid);
     let b = net.add_neuron_with_activation(Activation::ReLU);
-    net.add_synapse(a, b, 1.5);
+    net.add_synapse(a, b, 1.5).unwrap();
 
     net.propagate(a, 1.0);
     let first_b = net.value(b).unwrap();
