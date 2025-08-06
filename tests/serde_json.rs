@@ -16,7 +16,7 @@ fn network_json_roundtrip() {
     fs::remove_file(&path).ok();
 
     loaded.set_inputs(&[("in", 2.0)]);
-    loaded.propagate_inputs();
+    loaded.propagate_inputs().unwrap();
     let outputs = loaded.get_outputs();
     assert_eq!(outputs.get("out").copied().unwrap(), 3.0);
 }
