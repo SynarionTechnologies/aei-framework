@@ -1,4 +1,4 @@
-use aei_framework::{Activation, DomainNetwork, Event};
+use aei_framework::{Activation, DomainNetwork, Event, RandomNeuronAdded, RandomNeuronRemoved};
 use uuid::Uuid;
 
 // Ensure domain rules such as synapse cleanup are respected.
@@ -9,21 +9,21 @@ fn removing_neuron_cleans_up_synapses() {
     let s = Uuid::new_v4();
 
     let events = vec![
-        Event::NeuronAdded {
-            id: n1,
+        Event::RandomNeuronAdded(RandomNeuronAdded {
+            neuron_id: n1,
             activation: Activation::Identity,
-        },
-        Event::NeuronAdded {
-            id: n2,
+        }),
+        Event::RandomNeuronAdded(RandomNeuronAdded {
+            neuron_id: n2,
             activation: Activation::Identity,
-        },
+        }),
         Event::SynapseCreated {
             id: s,
             from: n1,
             to: n2,
             weight: 1.0,
         },
-        Event::NeuronRemoved { id: n1 },
+        Event::RandomNeuronRemoved(RandomNeuronRemoved { neuron_id: n1 }),
     ];
 
     let net = DomainNetwork::hydrate(&events);
@@ -37,10 +37,10 @@ fn removing_neuron_cleans_up_synapses() {
 fn synapse_with_unknown_neuron_is_ignored() {
     let n1 = Uuid::new_v4();
     let events = vec![
-        Event::NeuronAdded {
-            id: n1,
+        Event::RandomNeuronAdded(RandomNeuronAdded {
+            neuron_id: n1,
             activation: Activation::Identity,
-        },
+        }),
         Event::SynapseCreated {
             id: Uuid::new_v4(),
             from: n1,

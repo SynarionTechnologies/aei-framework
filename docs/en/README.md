@@ -72,28 +72,36 @@ println!("Result: {:?}", result.get("out"));
 
 ## Random Neuron Addition
 
-Grow the network by inserting a neuron with a random activation and automatic
-connections:
+Grow the network by issuing a command handled through the event-sourced
+infrastructure:
 
 ```rust
-use aei_framework::Network;
+use aei_framework::{
+    AddRandomNeuronCommand, AddRandomNeuronHandler, FileEventStore,
+};
+use rand::thread_rng;
+use std::path::PathBuf;
 
-let mut net = Network::new();
-let new_neuron_id = net.add_random_neuron();
-println!("Added neuron: {new_neuron_id}");
+let store = FileEventStore::new(PathBuf::from("events.log"));
+let mut handler = AddRandomNeuronHandler::new(store, thread_rng()).unwrap();
+let new_neuron_id = handler.handle(AddRandomNeuronCommand).unwrap();
+println!("Neuron added: {new_neuron_id}");
 ```
 
 ## Random Neuron Removal
 
-Shrink the network by deleting a random internal neuron along with all its
-connections:
+Remove an internal neuron via a dedicated command handler:
 
 ```rust
-use aei_framework::Network;
+use aei_framework::{
+    RemoveRandomNeuronCommand, RemoveRandomNeuronHandler, FileEventStore,
+};
+use rand::thread_rng;
+use std::path::PathBuf;
 
-let mut net = Network::new();
-// ... initialize the network ...
-if let Some(removed_id) = net.remove_random_neuron() {
+let store = FileEventStore::new(PathBuf::from("events.log"));
+let mut handler = RemoveRandomNeuronHandler::new(store, thread_rng()).unwrap();
+if let Ok(removed_id) = handler.handle(RemoveRandomNeuronCommand) {
     println!("Removed neuron: {removed_id}");
 }
 ```
