@@ -4,132 +4,150 @@ _Autonomous & Evolutive Intelligence Framework (AEIF)_
 
 ---
 
-## **Phase 0 — Foundations & Project Specs**
+## Phase 0 — Foundations & Project Specs
 
-- [x] **Initialize the repository:**  
+- [x] **Initialize the repository:**
   - Rust workspace
-  - Modular crates structure (`core`, `memory`, `runtime`, `modules`, `utils`)
+  - Modular crates structure
   - CI/CD for build & test
-- [ ] **Documentation:**  
-  - `README.md` (vision, goals, quickstart)
-  - `GLOSSARY.md` or section (definitions: agent, module, neuron, etc.)
+- [ ] **Documentation:**
+  - [x] `README.md` (vision, goals, quickstart)
+  - [ ] `GLOSSARY.md` or section
 
 ---
 
-## **Phase 1 — Core Architecture & Specifications**
+## Phase 1 — Core Architecture & Specifications
 
-- [ ] **Define core traits and interfaces:**  
+- [ ] **Define core traits and interfaces:**
   - `NeuralNetwork`: minimal interface for any network
   - `KnowledgeModule`: standard interface for attachable skills
   - `MemoryStore`: abstract storage backend
-- [ ] **Doc comments**: Each interface and struct documented (Rust style)
-- [ ] **Module skeletons:** Minimal code for each crate, clear responsibilities
+- [ ] **Module skeletons:** minimal code for each crate with clear responsibilities
+- [ ] **Doc comments:** each interface documented (Rust style)
 
 ---
 
-## **Phase 2 — Minimal Neural Network Engine (from scratch)**
+## Phase 2 — Minimal Neural Network Engine
 
-- [ ] **`crates/core/nn` module:**  
-  - `Neuron`, `Layer`, `Network` structs  
-  - Forward propagation (basic activation: sigmoid or ReLU)
-  - Pluggable layer structure for easy extension
-- [ ] **API design:**  
-  - Instantiate networks with arbitrary topology (input/hidden/output layers)
+- [ ] **`crates/core/nn` module:**
+  - `Neuron`, `Layer`, `Network` structs
+  - Forward propagation (sigmoid/ReLU)
+  - Pluggable layer structure for extension
+- [ ] **API design:**
+  - Instantiate networks with arbitrary topology
   - Forward function: input → output
-- [ ] **Examples:**  
-  - Simple usage in `examples/`: XOR or linear regression
+- [ ] **Examples:**
+  - Simple usage in `examples/` (e.g., XOR, linear regression)
 
 ---
 
-## **Phase 3 — Persistence & Memory Abstraction**
+## Phase 3 — Persistence & Memory Abstraction
 
-- [ ] **`crates/memory`:**  
+- [ ] **`crates/memory`:**
   - `MemoryStore` trait: put/get/save/load pattern
-  - In-memory backend (e.g., HashMap)
+  - In-memory backend (HashMap)
   - File-based backend (JSON/YAML/TOML)
-- [ ] **Serialization:**  
+- [ ] **Serialization:**
   - Save and restore neural network weights/config
-- [ ] **Demo:**  
-  - Store/load agent state, support checkpointing
+- [ ] **Demo:**
+  - Store/load agent state and support checkpointing
 
 ---
 
-## **Phase 4 — Knowledge Modules (Plug & Play Skills)**
+## Phase 4 — Knowledge Modules & Semantic Memory
 
-- [ ] **`crates/modules`:**  
+- [ ] **`crates/modules`:**
   - Define `KnowledgeModule` trait (versioned, attach/detach, identify)
   - Basic modules: e.g., "math", "echo", "counter"
-- [ ] **Dynamic loading:**  
-  - Runtime ability to attach/detach modules to agents
-- [ ] **API & documentation:**  
-  - How to build/extend modules
+- [ ] **Semantic memory:**
+  - Structure knowledge as graphs or embeddings
+  - Persistence hooks for long-term storage
+- [ ] **API & documentation:**
+  - How to build/extend modules and feed semantic memory
 
 ---
 
-## **Phase 5 — Runtime & Agent Orchestration**
+## Phase 5 — NLP Engine
 
-- [ ] **`crates/runtime`:**  
+- [ ] **Text processing pipeline:**
+  - Tokenization, stemming, basic parsing
+  - Embedding generation for integration with semantic memory
+- [ ] **Language understanding modules:**
+  - Intent recognition
+  - Entity extraction linked to knowledge base
+- [ ] **Examples:**
+  - Simple chatbot demo showcasing NLP capabilities
+
+---
+
+## Phase 6 — Runtime & Agent Orchestration
+
+- [ ] **`crates/runtime`:**
   - Agent scheduler (single & multi-agent)
-  - Event loop or basic tick-based system
-- [ ] **Interactions:**  
-  - Simple agent-to-agent communication (message/event bus)
-- [ ] **Examples:**  
-  - Multi-agent scenario in `examples/` (e.g., agents greeting, exchanging info)
+  - Event loop or tick-based system
+- [ ] **Interactions:**
+  - Agent-to-agent communication (message/event bus)
+  - Dynamic module orchestration
+- [ ] **Examples:**
+  - Multi-agent scenario in `examples/` (agents greeting, exchanging info)
 
 ---
 
-## **Phase 6 — Learning & Adaptation**
+## Phase 7 — Learning, Adaptation & Reasoning
 
-- [ ] **Basic learning loop:**  
-  - (Optional for MVP, but planned)  
-  - Backpropagation for simple networks (XOR)
-  - Training API for incremental improvements
-- [ ] **Metrics & evaluation:**  
-  - Track performance, success/failure rates
-
----
-
-## **Phase 7 — Tests, Documentation, and Demos**
-
-- [ ] **Unit & integration tests:**  
-  - For each core crate & module
-- [ ] **Comprehensive documentation:**  
-  - Examples, guides, API docs
-- [ ] **Showcase demos:**  
-  - In `examples/` folder: create, train, persist, and interact with agents
+- [ ] **Learning loop:**
+  - Backpropagation for simple networks
+  - Incremental training API
+- [ ] **Reasoning abilities:**
+  - Rule-based or heuristic reasoning over semantic memory
+  - Simple planning/decision modules
+- [ ] **Metrics & evaluation:**
+  - Track performance and learning progress
 
 ---
 
-## **Phase 8 — Community, Extensibility & Release**
+## Phase 8 — Tests, Documentation, and Demos
 
-- [ ] **Open source onboarding:**  
-  - Issues & milestones on GitHub
-  - First contributors, clear guidelines
-- [ ] **API stabilization:**  
-  - Finalize and freeze main interfaces
-- [ ] **First release (v0.1):**  
-  - Publish on crates.io
-  - Announce to the community
+- [ ] **Unit & integration tests:**
+  - Coverage for core crates and modules
+- [ ] **Comprehensive documentation:**
+  - Guides, API docs, tutorials
+- [ ] **Showcase demos:**
+  - In `examples/`: create, train, persist, and interact with agents
 
 ---
 
-## **Stretch Goals**
+## Phase 9 — Community, Extensibility & Release
 
-- [ ] Web/CLI interface for agent management
-- [ ] Plugin system for 3rd-party modules
+- [ ] **Open source onboarding:**
+  - [ ] Issues & milestones on GitHub
+  - [x] Clear contributor guidelines
+- [ ] **Extensibility:**
+  - Plugin system and extension templates
+  - FFI hooks for other languages
+- [ ] **First release (v0.1):**
+  - API stabilization
+  - Publish on crates.io and announce to the community
+
+---
+
+## Stretch Goals
+
+- [ ] Web or CLI interface for agent management
 - [ ] Support for alternative neural architectures (RNN, CNN)
 - [ ] Persistence in cloud backends
 - [ ] Interfacing with real-world data (APIs, web scraping)
-- [ ] Integration with other languages (FFI, Python, etc.)
+- [ ] Integration with other languages (Python bindings, etc.)
 
 ---
 
-## **How to contribute**
+## How to contribute
 
 - Discuss new features via GitHub issues
-- Propose your own modules/skills!
+- Propose your own modules or skills
+- Submit PRs with tests and documentation
 
 ---
 
-*This roadmap is meant to evolve as the project grows. Feedback and contributions are always welcome!*
+*This roadmap is iterative and may evolve based on community feedback and project progress.*
 
