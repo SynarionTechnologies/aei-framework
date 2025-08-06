@@ -22,6 +22,6 @@ fn main() {
     net.train(&dataset, 2000, 0.01).unwrap();
 
     // Predict for x=4 and print the result.
-    let out_val = net.predict(&vec![4.0, 1.0]).unwrap();
+    let out_val = net.predict(&[4.0, 1.0]).unwrap();
     println!("Input 4.0 => {:.3} (expected 9.0)", out_val[0]);
 }
