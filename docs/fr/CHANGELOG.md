@@ -30,3 +30,6 @@ et ce projet adhère à [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 - Les identifiants des neurones et des synapses utilisent désormais `Uuid` au lieu d'index numériques.
 - La structure du projet sépare désormais les primitives `core` et le module réseau `api`.
 - La documentation est disponible en anglais et en français sous `docs/`.
+### Supprimé
+- Alias de type inutilisés `NodeList` et `TopoOrder` dans l'API réseau.
+- Crate `modules` vide retirée de l'espace de travail.

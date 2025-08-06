@@ -1,9 +1,7 @@
 //! Dynamic neural network composed of neurons and synapses.
 
 type EdgeList = Vec<Vec<(usize, usize)>>;
-type NodeList = Vec<usize>;
-type TopoOrder = Vec<usize>;
-type GraphStructure = (EdgeList, EdgeList, NodeList, NodeList, TopoOrder);
+type GraphStructure = (EdgeList, EdgeList, Vec<usize>, Vec<usize>, Vec<usize>);
 
 use std::collections::{HashMap, VecDeque};
 use std::fs::File;
