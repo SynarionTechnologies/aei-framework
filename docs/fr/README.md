@@ -65,7 +65,7 @@ net.add_synapse(a, out, 1.0).unwrap();
 net.add_synapse(b, out, 1.0).unwrap();
 
 net.set_inputs(&[("a", 1.0), ("b", 0.0)]);
-net.propagate_inputs();
+net.propagate_inputs().unwrap();
 let result = net.get_outputs();
 println!("Result: {:?}", result.get("out"));
 ```
@@ -134,9 +134,9 @@ let dataset = [
     (vec![1.0, 1.0], vec![0.0]),
 ];
 
-net.train(&dataset, 10_000, 0.5);
+net.train(&dataset, 10_000, 0.5).unwrap();
 
-let output = net.predict(&[0.0, 1.0])[0];
+let output = net.predict(&[0.0, 1.0]).unwrap()[0];
 println!("XOR(0,1) ≈ {output}");
 ```
 

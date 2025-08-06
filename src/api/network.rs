@@ -46,12 +46,15 @@ pub struct Network {
 pub enum NetworkError {
     /// A provided neuron identifier does not exist in the network.
     UnknownNeuron,
+    /// The network contains a cycle and cannot be processed.
+    CycleDetected,
 }
 
 impl std::fmt::Display for NetworkError {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
             Self::UnknownNeuron => write!(f, "unknown neuron"),
+            Self::CycleDetected => write!(f, "cycle detected"),
         }
     }
 }
@@ -185,8 +188,8 @@ impl Network {
     }
 
     /// Propagates previously assigned inputs through the network.
-    pub fn propagate_inputs(&mut self) {
-        let (incoming, _outgoing, _auto_inputs, _auto_outputs, order) = self.graph_structure();
+    pub fn propagate_inputs(&mut self) -> Result<(), NetworkError> {
+        let (incoming, _outgoing, _auto_inputs, _auto_outputs, order) = self.graph_structure()?;
         let num_neurons = self.neurons.len();
         let mut values = vec![0.0; num_neurons];
         let mut is_input = vec![false; num_neurons];
@@ -218,6 +221,7 @@ impl Network {
         }
 
         self.input_buffer.clear();
+        Ok(())
     }
 
     /// Returns the values of all output neurons identified by name.
@@ -345,8 +349,8 @@ impl Network {
     /// The number of provided inputs must match the number of input neurons
     /// (neurons without incoming synapses). Output values are returned in the
     /// order of their neuron identifiers.
-    pub fn predict(&mut self, inputs: &[f64]) -> Vec<f64> {
-        let (incoming, _outgoing, input_ids, output_ids, order) = self.graph_structure();
+    pub fn predict(&mut self, inputs: &[f64]) -> Result<Vec<f64>, NetworkError> {
+        let (incoming, _outgoing, input_ids, output_ids, order) = self.graph_structure()?;
         let num_neurons = self.neurons.len();
         let mut is_output = vec![false; num_neurons];
         for &idx in &output_ids {
@@ -379,7 +383,7 @@ impl Network {
             }
         }
 
-        output_ids.iter().map(|&idx| values[idx]).collect()
+        Ok(output_ids.iter().map(|&idx| values[idx]).collect())
     }
 
     /// Trains the network on a dataset using the backpropagation algorithm.
@@ -389,12 +393,17 @@ impl Network {
     /// neurons (neurons without incoming synapses) and similarly for outputs.
     /// Weights are updated using gradient descent with the provided
     /// `learning_rate`.
-    pub fn train(&mut self, dataset: &[(Vec<f64>, Vec<f64>)], epochs: usize, learning_rate: f64) {
+    pub fn train(
+        &mut self,
+        dataset: &[(Vec<f64>, Vec<f64>)],
+        epochs: usize,
+        learning_rate: f64,
+    ) -> Result<(), NetworkError> {
         if dataset.is_empty() || epochs == 0 {
-            return;
+            return Ok(());
         }
 
-        let (incoming, outgoing, input_ids, output_ids, order) = self.graph_structure();
+        let (incoming, outgoing, input_ids, output_ids, order) = self.graph_structure()?;
         let num_neurons = self.neurons.len();
         let mut is_output = vec![false; num_neurons];
         for &idx in &output_ids {
@@ -470,6 +479,7 @@ impl Network {
             let avg_loss = epoch_loss / dataset.len() as f64;
             println!("Epoch {}/{} - loss: {}", epoch + 1, epochs, avg_loss);
         }
+        Ok(())
     }
 
     /// Builds adjacency lists and a topological ordering of the network.
@@ -480,7 +490,7 @@ impl Network {
     /// pairs for edges leaving `id`, `input_ids` are neurons with no incoming
     /// edges, `output_ids` are neurons with no outgoing edges and `order` is a
     /// topological ordering of all neurons.
-    fn graph_structure(&self) -> GraphStructure {
+    fn graph_structure(&self) -> Result<GraphStructure, NetworkError> {
         let num_neurons = self.neurons.len();
         let mut incoming = vec![Vec::new(); num_neurons];
         let mut outgoing = vec![Vec::new(); num_neurons];
@@ -517,9 +527,9 @@ impl Network {
             }
         }
         if order.len() != num_neurons {
-            panic!("Network contains cycles which are not supported");
+            return Err(NetworkError::CycleDetected);
         }
 
-        (incoming, outgoing, input_ids, output_ids, order)
+        Ok((incoming, outgoing, input_ids, output_ids, order))
     }
 }
