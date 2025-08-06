@@ -9,4 +9,6 @@ pub enum Query {
     GetNeuron { id: Uuid },
     /// Return all known neurons.
     ListNeurons,
+    /// Return all known synapses.
+    ListSynapses,
 }

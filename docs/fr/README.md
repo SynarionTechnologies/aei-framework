@@ -97,6 +97,24 @@ if let Some(removed_id) = net.remove_random_neuron() {
 }
 ```
 
+## Ajout aléatoire de synapse
+
+Créer une synapse entre deux neurones choisis aléatoirement en utilisant le
+handler orienté événements :
+
+```rust
+use aei_framework::{
+    application::{AddRandomSynapseCommand, AddRandomSynapseHandler},
+    infrastructure::FileEventStore,
+};
+use std::path::PathBuf;
+
+let store = FileEventStore::new(PathBuf::from("events.log"));
+let mut handler = AddRandomSynapseHandler::new(store, rand::thread_rng()).unwrap();
+let synapse_id = handler.handle(AddRandomSynapseCommand).unwrap();
+println!("Synapse créée : {synapse_id}");
+```
+
 ## Sérialisation
 
 Persistez les réseaux sur disque et rechargez-les ensuite en JSON :
