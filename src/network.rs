@@ -6,6 +6,7 @@ type TopoOrder = Vec<usize>;
 type GraphStructure = (EdgeList, EdgeList, NodeList, NodeList, TopoOrder);
 
 use std::collections::{HashMap, VecDeque};
+use uuid::Uuid;
 
 use crate::{Activation, Neuron, Synapse};
 
@@ -15,25 +16,22 @@ use crate::{Activation, Neuron, Synapse};
 /// supports propagating values through the existing connections.
 #[derive(Debug, Default)]
 pub struct Network {
-    /// All neurons indexed by their unique identifier.
-    ///
-    /// TODO: migrate to `Uuid` once `Neuron` identifiers switch to globally
-    /// unique values.
-    neurons: HashMap<usize, Neuron>,
+    /// All neurons stored contiguously.
+    neurons: Vec<Neuron>,
+    /// Map from neuron [`Uuid`] to its index within `neurons`.
+    neuron_indices: HashMap<Uuid, usize>,
     /// Directed connections transferring weighted signals between neurons.
     synapses: Vec<Synapse>,
-    /// Identifier assigned to the next neuron added to the network.
-    next_id: usize,
-    /// Mapping from logical input names to internal neuron ids.
-    pub input_neurons: HashMap<String, usize>,
-    /// Mapping from logical output names to internal neuron ids.
-    pub output_neurons: HashMap<String, usize>,
+    /// Mapping from logical input names to neuron ids.
+    pub input_neurons: HashMap<String, Uuid>,
+    /// Mapping from logical output names to neuron ids.
+    pub output_neurons: HashMap<String, Uuid>,
     /// Ordered list of input neuron ids for index-based access.
-    input_order: Vec<usize>,
+    input_order: Vec<Uuid>,
     /// Ordered list of output neuron ids for index-based access.
-    output_order: Vec<usize>,
+    output_order: Vec<Uuid>,
     /// Temporary storage for values set through [`set_inputs`] before propagation.
-    input_buffer: HashMap<usize, f64>,
+    input_buffer: HashMap<Uuid, f64>,
 }
 
 impl Network {
@@ -45,22 +43,32 @@ impl Network {
     /// Adds a neuron using the default [`Activation::Identity`].
     ///
     /// Returns the identifier assigned to the new neuron.
-    pub fn add_neuron(&mut self) -> usize {
+    pub fn add_neuron(&mut self) -> Uuid {
         self.add_neuron_with_activation(Activation::Identity)
     }
 
     /// Adds a neuron with a specified activation function and returns its id.
-    pub fn add_neuron_with_activation(&mut self, activation: Activation) -> usize {
-        let id = self.next_id;
-        self.next_id += 1;
-        self.neurons.insert(id, Neuron::new(id, activation));
+    pub fn add_neuron_with_activation(&mut self, activation: Activation) -> Uuid {
+        let neuron = Neuron::new(activation);
+        let id = neuron.id;
+        self.neuron_indices.insert(id, self.neurons.len());
+        self.neurons.push(neuron);
+        id
+    }
+
+    /// Adds a neuron with an explicit [`Uuid`].
+    pub fn add_neuron_with_id(&mut self, id: Uuid, activation: Activation) -> Uuid {
+        let neuron = Neuron::with_id(id, activation);
+        let id = neuron.id;
+        self.neuron_indices.insert(id, self.neurons.len());
+        self.neurons.push(neuron);
         id
     }
 
     /// Adds a neuron designated as an input with the given `name` and `activation`.
     ///
     /// Returns the internal identifier assigned to the new neuron.
-    pub fn add_input_neuron(&mut self, name: &str, activation: Activation) -> usize {
+    pub fn add_input_neuron(&mut self, name: &str, activation: Activation) -> Uuid {
         let id = self.add_neuron_with_activation(activation);
         self.input_neurons.insert(name.to_string(), id);
         self.input_order.push(id);
@@ -70,7 +78,7 @@ impl Network {
     /// Adds a neuron designated as an output with the given `name` and `activation`.
     ///
     /// Returns the internal identifier assigned to the new neuron.
-    pub fn add_output_neuron(&mut self, name: &str, activation: Activation) -> usize {
+    pub fn add_output_neuron(&mut self, name: &str, activation: Activation) -> Uuid {
         let id = self.add_neuron_with_activation(activation);
         self.output_neurons.insert(name.to_string(), id);
         self.output_order.push(id);
@@ -81,8 +89,18 @@ impl Network {
     ///
     /// If either identifier does not correspond to an existing neuron the
     /// synapse is still recorded but will have no effect during propagation.
-    pub fn add_synapse(&mut self, from: usize, to: usize, weight: f64) {
-        self.synapses.push(Synapse::new(from, to, weight));
+    pub fn add_synapse(&mut self, from: Uuid, to: Uuid, weight: f64) -> Uuid {
+        let syn = Synapse::new(from, to, weight);
+        let id = syn.id;
+        self.synapses.push(syn);
+        id
+    }
+
+    /// Adds a synapse with an explicit [`Uuid`].
+    pub fn add_synapse_with_id(&mut self, id: Uuid, from: Uuid, to: Uuid, weight: f64) -> Uuid {
+        let syn = Synapse::with_id(id, from, to, weight);
+        self.synapses.push(syn);
+        id
     }
 
     /// Assigns values to input neurons identified by name.
@@ -109,31 +127,32 @@ impl Network {
     /// Propagates previously assigned inputs through the network.
     pub fn propagate_inputs(&mut self) {
         let (incoming, _outgoing, _auto_inputs, _auto_outputs, order) = self.graph_structure();
-        let mut values = vec![0.0; self.next_id];
-        let mut is_input = vec![false; self.next_id];
+        let num_neurons = self.neurons.len();
+        let mut values = vec![0.0; num_neurons];
+        let mut is_input = vec![false; num_neurons];
 
         for &id in self.input_neurons.values() {
-            let activation = self.neurons.get(&id).unwrap().activation;
-            let v = *self.input_buffer.get(&id).unwrap_or(&0.0);
-            values[id] = activation.apply(v);
-            is_input[id] = true;
+            if let Some(&idx) = self.neuron_indices.get(&id) {
+                let activation = self.neurons[idx].activation;
+                let v = *self.input_buffer.get(&id).unwrap_or(&0.0);
+                values[idx] = activation.apply(v);
+                is_input[idx] = true;
+            }
         }
 
-        for &id in &order {
-            if is_input[id] {
+        for &idx in &order {
+            if is_input[idx] {
                 continue;
             }
-            let sum: f64 = incoming[id]
+            let sum: f64 = incoming[idx]
                 .iter()
-                .map(|&(idx, from)| values[from] * self.synapses[idx].weight)
+                .map(|&(s_idx, from_idx)| values[from_idx] * self.synapses[s_idx].weight)
                 .sum();
-            if let Some(n) = self.neurons.get(&id) {
-                values[id] = n.activation.apply(sum);
-            }
+            values[idx] = self.neurons[idx].activation.apply(sum);
         }
 
-        for (id, &v) in values.iter().enumerate().take(self.next_id) {
-            if let Some(n) = self.neurons.get_mut(&id) {
+        for (idx, &v) in values.iter().enumerate() {
+            if let Some(n) = self.neurons.get_mut(idx) {
                 n.value = v;
             }
         }
@@ -145,7 +164,11 @@ impl Network {
     pub fn get_outputs(&self) -> HashMap<String, f64> {
         self.output_neurons
             .iter()
-            .filter_map(|(name, &id)| self.neurons.get(&id).map(|n| (name.clone(), n.value)))
+            .filter_map(|(name, &id)| {
+                self.neuron_indices
+                    .get(&id)
+                    .and_then(|&idx| self.neurons.get(idx).map(|n| (name.clone(), n.value)))
+            })
             .collect()
     }
 
@@ -153,7 +176,12 @@ impl Network {
     pub fn get_outputs_by_index(&self) -> Vec<f64> {
         self.output_order
             .iter()
-            .map(|&id| self.neurons.get(&id).map_or(0.0, |n| n.value))
+            .map(|&id| {
+                self.neuron_indices
+                    .get(&id)
+                    .and_then(|&idx| self.neurons.get(idx).map(|n| n.value))
+                    .unwrap_or(0.0)
+            })
             .collect()
     }
 
@@ -185,24 +213,25 @@ impl Network {
     /// net.add_synapse(a, b, 2.0);
     /// net.propagate(a, 1.0);
     /// ```
-    pub fn propagate(&mut self, start: usize, value: f64) {
+    pub fn propagate(&mut self, start: Uuid, value: f64) {
         // 1. Reset all neuron values.
-        for neuron in self.neurons.values_mut() {
+        for neuron in self.neurons.iter_mut() {
             neuron.value = 0.0;
         }
 
         // 2. Activate the source neuron with the incoming value.
-        let start_neuron = match self.neurons.get_mut(&start) {
-            Some(n) => {
-                n.value = n.activation.apply(value);
-                n.id
-            }
+        let start_idx = match self.neuron_indices.get(&start).copied() {
+            Some(i) => i,
             None => return,
         };
+        let start_id = self.neurons[start_idx].id;
+        let activation = self.neurons[start_idx].activation;
+        self.neurons[start_idx].value = activation.apply(value);
 
         // Track how many inputs each neuron expects so we know when to apply
         // the activation function.
-        let mut in_deg: HashMap<usize, usize> = self.neurons.keys().map(|&k| (k, 0usize)).collect();
+        let mut in_deg: HashMap<Uuid, usize> =
+            self.neurons.iter().map(|n| (n.id, 0usize)).collect();
         for s in &self.synapses {
             if let Some(d) = in_deg.get_mut(&s.to) {
                 *d += 1;
@@ -210,18 +239,19 @@ impl Network {
         }
 
         // Accumulate weighted sums until all inputs of a neuron are processed.
-        let mut sums: HashMap<usize, f64> = HashMap::new();
+        let mut sums: HashMap<Uuid, f64> = HashMap::new();
 
         // 3. Propagate weighted values.
-        let mut queue = VecDeque::from([start_neuron]);
+        let mut queue = VecDeque::from([start_id]);
         while let Some(id) = queue.pop_front() {
-            let from_value = match self.neurons.get(&id) {
-                Some(n) => n.value,
+            let from_idx = match self.neuron_indices.get(&id).copied() {
+                Some(i) => i,
                 None => continue,
             };
+            let from_value = self.neurons[from_idx].value;
 
             for syn in self.synapses.iter().filter(|s| s.from == id) {
-                if !self.neurons.contains_key(&syn.to) {
+                if !self.neuron_indices.contains_key(&syn.to) {
                     continue;
                 }
                 *sums.entry(syn.to).or_insert(0.0) += from_value * syn.weight;
@@ -230,8 +260,9 @@ impl Network {
                     *d -= 1;
                     if *d == 0 {
                         if let Some(sum) = sums.remove(&syn.to) {
-                            if let Some(n) = self.neurons.get_mut(&syn.to) {
-                                n.value = n.activation.apply(sum);
+                            if let Some(&to_idx) = self.neuron_indices.get(&syn.to) {
+                                let activation = self.neurons[to_idx].activation;
+                                self.neurons[to_idx].value = activation.apply(sum);
                             }
                         }
                         queue.push_back(syn.to);
@@ -242,8 +273,10 @@ impl Network {
     }
 
     /// Returns the current value of a neuron, if it exists.
-    pub fn value(&self, id: usize) -> Option<f64> {
-        self.neurons.get(&id).map(|n| n.value)
+    pub fn value(&self, id: Uuid) -> Option<f64> {
+        self.neuron_indices
+            .get(&id)
+            .and_then(|&idx| self.neurons.get(idx).map(|n| n.value))
     }
 
     /// Computes a forward pass for a full set of input values and returns the
@@ -254,40 +287,39 @@ impl Network {
     /// order of their neuron identifiers.
     pub fn predict(&mut self, inputs: &[f64]) -> Vec<f64> {
         let (incoming, _outgoing, input_ids, output_ids, order) = self.graph_structure();
-        let mut is_output = vec![false; self.next_id];
-        for &id in &output_ids {
-            is_output[id] = true;
+        let num_neurons = self.neurons.len();
+        let mut is_output = vec![false; num_neurons];
+        for &idx in &output_ids {
+            is_output[idx] = true;
         }
         assert_eq!(inputs.len(), input_ids.len(), "input length mismatch");
 
-        let mut values = vec![0.0; self.next_id];
-        let mut is_input = vec![false; self.next_id];
-        for (i, &id) in input_ids.iter().enumerate() {
-            let activation = self.neurons.get(&id).unwrap().activation;
-            values[id] = activation.apply(inputs[i]);
-            is_input[id] = true;
+        let mut values = vec![0.0; num_neurons];
+        let mut is_input = vec![false; num_neurons];
+        for (i, &idx) in input_ids.iter().enumerate() {
+            let activation = self.neurons[idx].activation;
+            values[idx] = activation.apply(inputs[i]);
+            is_input[idx] = true;
         }
 
-        for &id in &order {
-            if is_input[id] {
+        for &idx in &order {
+            if is_input[idx] {
                 continue;
             }
-            let sum: f64 = incoming[id]
+            let sum: f64 = incoming[idx]
                 .iter()
-                .map(|&(idx, from)| values[from] * self.synapses[idx].weight)
+                .map(|&(s_idx, from_idx)| values[from_idx] * self.synapses[s_idx].weight)
                 .sum();
-            if let Some(n) = self.neurons.get(&id) {
-                values[id] = n.activation.apply(sum);
-            }
+            values[idx] = self.neurons[idx].activation.apply(sum);
         }
 
-        for (id, &v) in values.iter().enumerate().take(self.next_id) {
-            if let Some(n) = self.neurons.get_mut(&id) {
+        for (idx, &v) in values.iter().enumerate() {
+            if let Some(n) = self.neurons.get_mut(idx) {
                 n.value = v;
             }
         }
 
-        output_ids.iter().map(|&id| values[id]).collect()
+        output_ids.iter().map(|&idx| values[idx]).collect()
     }
 
     /// Trains the network on a dataset using the backpropagation algorithm.
@@ -303,9 +335,10 @@ impl Network {
         }
 
         let (incoming, outgoing, input_ids, output_ids, order) = self.graph_structure();
-        let mut is_output = vec![false; self.next_id];
-        for &id in &output_ids {
-            is_output[id] = true;
+        let num_neurons = self.neurons.len();
+        let mut is_output = vec![false; num_neurons];
+        for &idx in &output_ids {
+            is_output[idx] = true;
         }
 
         for epoch in 0..epochs {
@@ -314,60 +347,62 @@ impl Network {
                 assert_eq!(inputs.len(), input_ids.len(), "input length mismatch");
                 assert_eq!(targets.len(), output_ids.len(), "output length mismatch");
 
-                let mut values = vec![0.0; self.next_id];
-                let mut is_input = vec![false; self.next_id];
-                for (i, &id) in input_ids.iter().enumerate() {
-                    let activation = self.neurons.get(&id).unwrap().activation;
-                    values[id] = activation.apply(inputs[i]);
-                    is_input[id] = true;
+                let mut values = vec![0.0; num_neurons];
+                let mut is_input = vec![false; num_neurons];
+                for (i, &idx) in input_ids.iter().enumerate() {
+                    let activation = self.neurons[idx].activation;
+                    values[idx] = activation.apply(inputs[i]);
+                    is_input[idx] = true;
                 }
 
-                for &id in &order {
-                    if is_input[id] {
+                for &idx in &order {
+                    if is_input[idx] {
                         continue;
                     }
-                    let sum: f64 = incoming[id]
+                    let sum: f64 = incoming[idx]
                         .iter()
-                        .map(|&(idx, from)| values[from] * self.synapses[idx].weight)
+                        .map(|&(s_idx, from_idx)| values[from_idx] * self.synapses[s_idx].weight)
                         .sum();
-                    if let Some(n) = self.neurons.get(&id) {
-                        values[id] = n.activation.apply(sum);
-                    }
+                    values[idx] = self.neurons[idx].activation.apply(sum);
                 }
 
-                let mut deltas = vec![0.0; self.next_id];
-                for (i, &id) in output_ids.iter().enumerate() {
-                    let output = values[id];
+                let mut deltas = vec![0.0; num_neurons];
+                for (i, &idx) in output_ids.iter().enumerate() {
+                    let output = values[idx];
                     let target = targets[i];
-                    if let Some(n) = self.neurons.get(&id) {
-                        let error = output - target;
-                        epoch_loss += 0.5 * error * error;
+                    let error = output - target;
+                    epoch_loss += 0.5 * error * error;
 
-                        deltas[id] = error * n.activation.derivative(output);
-                    }
+                    deltas[idx] = error * self.neurons[idx].activation.derivative(output);
                 }
 
-                for &id in order.iter().rev() {
-                    if is_output[id] {
+                for &idx in order.iter().rev() {
+                    if is_output[idx] {
                         continue;
                     }
                     let mut sum = 0.0;
-                    for &(idx, to) in &outgoing[id] {
-                        sum += self.synapses[idx].weight * deltas[to];
+                    for &(s_idx, to_idx) in &outgoing[idx] {
+                        sum += self.synapses[s_idx].weight * deltas[to_idx];
                     }
-                    if let Some(n) = self.neurons.get(&id) {
-                        deltas[id] = n.activation.derivative(values[id]) * sum;
-                    }
+                    deltas[idx] = self.neurons[idx].activation.derivative(values[idx]) * sum;
                 }
 
                 for syn in self.synapses.iter_mut() {
-                    let grad = values[syn.from] * deltas[syn.to];
+                    let from_idx = match self.neuron_indices.get(&syn.from) {
+                        Some(&i) => i,
+                        None => continue,
+                    };
+                    let to_idx = match self.neuron_indices.get(&syn.to) {
+                        Some(&i) => i,
+                        None => continue,
+                    };
+                    let grad = values[from_idx] * deltas[to_idx];
                     syn.weight -= learning_rate * grad;
                 }
 
-                for (id, &_v) in values.iter().enumerate().take(self.next_id) {
-                    if let Some(n) = self.neurons.get_mut(&id) {
-                        n.value = values[id];
+                for (idx, &_v) in values.iter().enumerate() {
+                    if let Some(n) = self.neurons.get_mut(idx) {
+                        n.value = values[idx];
                     }
                 }
             }
@@ -386,14 +421,20 @@ impl Network {
     /// edges, `output_ids` are neurons with no outgoing edges and `order` is a
     /// topological ordering of all neurons.
     fn graph_structure(&self) -> GraphStructure {
-        let num_neurons = self.next_id;
+        let num_neurons = self.neurons.len();
         let mut incoming = vec![Vec::new(); num_neurons];
         let mut outgoing = vec![Vec::new(); num_neurons];
         for (idx, syn) in self.synapses.iter().enumerate() {
-            if syn.from < num_neurons && syn.to < num_neurons {
-                incoming[syn.to].push((idx, syn.from));
-                outgoing[syn.from].push((idx, syn.to));
-            }
+            let from_idx = match self.neuron_indices.get(&syn.from) {
+                Some(&i) => i,
+                None => continue,
+            };
+            let to_idx = match self.neuron_indices.get(&syn.to) {
+                Some(&i) => i,
+                None => continue,
+            };
+            incoming[to_idx].push((idx, from_idx));
+            outgoing[from_idx].push((idx, to_idx));
         }
 
         let input_ids: Vec<usize> = (0..num_neurons)
@@ -406,12 +447,12 @@ impl Network {
         let mut in_deg: Vec<usize> = incoming.iter().map(|v| v.len()).collect();
         let mut queue: VecDeque<usize> = input_ids.iter().copied().collect();
         let mut order = Vec::new();
-        while let Some(id) = queue.pop_front() {
-            order.push(id);
-            for &(_, to) in &outgoing[id] {
-                in_deg[to] -= 1;
-                if in_deg[to] == 0 {
-                    queue.push_back(to);
+        while let Some(idx) = queue.pop_front() {
+            order.push(idx);
+            for &(_, to_idx) in &outgoing[idx] {
+                in_deg[to_idx] -= 1;
+                if in_deg[to_idx] == 0 {
+                    queue.push_back(to_idx);
                 }
             }
         }

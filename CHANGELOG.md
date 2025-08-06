@@ -24,4 +24,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Propagation logic now applies activations after weighted sums and resets all
   neuron values between runs.
 - Comprehensive rustdoc for modules and public APIs.
-- Neurons carry a `Uuid` preparing for global identifiers.
+- Neuron and synapse identifiers now use `Uuid` instead of numeric indexes.
