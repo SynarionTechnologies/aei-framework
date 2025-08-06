@@ -6,7 +6,7 @@
 use std::collections::HashMap;
 
 use crate::core::{Neuron, Synapse};
-use crate::events::Event;
+use crate::events::{Event, RandomSynapseAdded};
 use uuid::Uuid;
 
 /// Aggregate root containing all neurons and synapses.
@@ -53,6 +53,26 @@ impl Network {
             Event::SynapseRemoved { id } => {
                 self.synapses.remove(id);
             }
+            Event::RandomSynapseAdded(e) => {
+                self.apply_random_synapse_added(e);
+            }
+        }
+    }
+
+    /// Applies a [`RandomSynapseAdded`] event to the network state.
+    fn apply_random_synapse_added(&mut self, event: &RandomSynapseAdded) {
+        if self.neurons.contains_key(&event.from)
+            && self.neurons.contains_key(&event.to)
+            && event.from != event.to
+            && !self
+                .synapses
+                .values()
+                .any(|s| s.from == event.from && s.to == event.to)
+        {
+            self.synapses.insert(
+                event.synapse_id,
+                Synapse::with_id(event.synapse_id, event.from, event.to, event.weight),
+            );
         }
     }
 
@@ -60,5 +80,11 @@ impl Network {
     #[must_use]
     pub fn neurons(&self) -> Vec<&Neuron> {
         self.neurons.values().collect()
+    }
+
+    /// Convenience method to list all synapses.
+    #[must_use]
+    pub fn synapses(&self) -> Vec<&Synapse> {
+        self.synapses.values().collect()
     }
 }

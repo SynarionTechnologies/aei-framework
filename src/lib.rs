@@ -11,10 +11,13 @@ pub mod infrastructure;
 pub mod queries;
 
 pub use api::{Network, NetworkError};
-pub use application::{CommandHandler, QueryHandler, QueryResult};
+pub use application::{
+    AddRandomSynapseCommand, AddRandomSynapseError, AddRandomSynapseHandler, CommandHandler,
+    QueryHandler, QueryResult,
+};
 pub use commands::Command;
 pub use core::{Activation, Neuron, Synapse};
 pub use domain::Network as DomainNetwork;
-pub use events::Event;
+pub use events::{Event, RandomSynapseAdded};
 pub use infrastructure::{EventStore, FileEventStore};
 pub use queries::Query;

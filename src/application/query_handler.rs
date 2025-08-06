@@ -1,6 +1,6 @@
 //! Handles read-side queries against the current state.
 
-use crate::core::Neuron;
+use crate::core::{Neuron, Synapse};
 use crate::domain::Network;
 use crate::queries::Query;
 use uuid::Uuid;
@@ -11,6 +11,8 @@ pub enum QueryResult<'a> {
     Neuron(Option<&'a Neuron>),
     /// Listing of all neurons.
     Neurons(Vec<&'a Neuron>),
+    /// Listing of all synapses.
+    Synapses(Vec<&'a Synapse>),
 }
 
 /// Provides read-only access to the network state.
@@ -29,6 +31,7 @@ impl<'a> QueryHandler<'a> {
         match query {
             Query::GetNeuron { id } => QueryResult::Neuron(self.network.neurons.get(&id)),
             Query::ListNeurons => QueryResult::Neurons(self.network.neurons()),
+            Query::ListSynapses => QueryResult::Synapses(self.network.synapses()),
         }
     }
 

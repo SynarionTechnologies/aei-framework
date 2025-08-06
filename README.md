@@ -98,6 +98,24 @@ if let Some(removed_id) = net.remove_random_neuron() {
 }
 ```
 
+## Random Synapse Addition
+
+Create a synapse between two randomly chosen neurons using the event-sourced
+handler:
+
+```rust
+use aei_framework::{
+    application::{AddRandomSynapseCommand, AddRandomSynapseHandler},
+    infrastructure::FileEventStore,
+};
+use std::path::PathBuf;
+
+let store = FileEventStore::new(PathBuf::from("events.log"));
+let mut handler = AddRandomSynapseHandler::new(store, rand::thread_rng()).unwrap();
+let synapse_id = handler.handle(AddRandomSynapseCommand).unwrap();
+println!("Created synapse: {synapse_id}");
+```
+
 ## Serialization
 
 Persist networks to disk and load them back later using JSON:
