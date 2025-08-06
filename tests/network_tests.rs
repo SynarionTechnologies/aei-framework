@@ -1,4 +1,4 @@
-use aei_framework::{Activation, Network};
+use aei_framework::{Activation, Network, NetworkError};
 use uuid::Uuid;
 
 // Helper for floating-point comparisons in tests.
@@ -13,7 +13,7 @@ fn test_sigmoid_to_relu_chain() {
     let mut net = Network::new();
     let n1 = net.add_neuron_with_activation(Activation::Sigmoid);
     let n2 = net.add_neuron_with_activation(Activation::ReLU);
-    net.add_synapse(n1, n2, 2.0);
+    net.add_synapse(n1, n2, 2.0).unwrap();
 
     net.propagate(n1, 1.0);
 
@@ -30,7 +30,7 @@ fn test_multiple_propagations_reset() {
     let mut net = Network::new();
     let src = net.add_neuron_with_activation(Activation::Identity);
     let dst = net.add_neuron_with_activation(Activation::Identity);
-    net.add_synapse(src, dst, 1.0);
+    net.add_synapse(src, dst, 1.0).unwrap();
 
     for &v in &[1.0, -2.0, 0.5] {
         net.propagate(src, v);
@@ -54,10 +54,8 @@ fn test_propagate_nonexistent_neuron() {
 fn test_synapse_to_missing_neuron() {
     let mut net = Network::new();
     let src = net.add_neuron();
-    net.add_synapse(src, Uuid::new_v4(), 1.0);
-
-    net.propagate(src, 1.0);
-    assert!(approx_eq(net.value(src).unwrap(), 1.0));
+    let res = net.add_synapse(src, Uuid::new_v4(), 1.0);
+    assert!(matches!(res, Err(NetworkError::UnknownNeuron)));
 }
 
 /// Synapses whose source neuron is missing never fire.
@@ -65,10 +63,8 @@ fn test_synapse_to_missing_neuron() {
 fn test_orphan_synapse() {
     let mut net = Network::new();
     let existing = net.add_neuron();
-    net.add_synapse(Uuid::new_v4(), existing, 1.0);
-
-    net.propagate(existing, 2.0);
-    assert!(approx_eq(net.value(existing).unwrap(), 2.0));
+    let res = net.add_synapse(Uuid::new_v4(), existing, 1.0);
+    assert!(matches!(res, Err(NetworkError::UnknownNeuron)));
 }
 
 /// Neuron identifiers remain stable through string serialization.

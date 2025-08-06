@@ -6,7 +6,7 @@ fn network_json_roundtrip() {
     let mut net = Network::new();
     let inp = net.add_input_neuron("in", Activation::Identity);
     let out = net.add_output_neuron("out", Activation::Identity);
-    net.add_synapse(inp, out, 1.5);
+    net.add_synapse(inp, out, 1.5).unwrap();
 
     let mut path = std::env::temp_dir();
     path.push("net.json");

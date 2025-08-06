@@ -8,12 +8,12 @@ fn main() {
     let h2 = net.add_neuron_with_activation(Activation::Sigmoid);
     let o = net.add_neuron_with_activation(Activation::Sigmoid);
 
-    net.add_synapse(i1, h1, 0.5);
-    net.add_synapse(i1, h2, -0.5);
-    net.add_synapse(i2, h1, -0.5);
-    net.add_synapse(i2, h2, 0.5);
-    net.add_synapse(h1, o, 0.5);
-    net.add_synapse(h2, o, 0.5);
+    net.add_synapse(i1, h1, 0.5).unwrap();
+    net.add_synapse(i1, h2, -0.5).unwrap();
+    net.add_synapse(i2, h1, -0.5).unwrap();
+    net.add_synapse(i2, h2, 0.5).unwrap();
+    net.add_synapse(h1, o, 0.5).unwrap();
+    net.add_synapse(h2, o, 0.5).unwrap();
 
     let dataset = [
         (vec![0.0, 0.0], vec![0.0]),

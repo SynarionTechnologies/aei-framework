@@ -4,5 +4,5 @@
 pub mod api;
 pub mod core;
 
-pub use api::Network;
+pub use api::{Network, NetworkError};
 pub use core::{Activation, Neuron, Synapse};

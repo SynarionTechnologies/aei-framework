@@ -21,8 +21,8 @@ fn main() {
     let input = net.add_neuron(); // Uses the default identity activation
     let hidden = net.add_neuron_with_activation(Activation::ReLU);
     let output = net.add_neuron_with_activation(Activation::Sigmoid);
-    net.add_synapse(input, hidden, 1.0);
-    net.add_synapse(hidden, output, 1.0);
+    net.add_synapse(input, hidden, 1.0).unwrap();
+    net.add_synapse(hidden, output, 1.0).unwrap();
     net.propagate(input, -0.5);
     println!("Value of output neuron: {:?}", net.value(output));
 }
@@ -40,8 +40,8 @@ let mut net = Network::new();
 let input = net.add_neuron_with_activation(Activation::Identity);
 let hidden = net.add_neuron_with_activation(Activation::ReLU);
 let output = net.add_neuron_with_activation(Activation::Tanh);
-net.add_synapse(input, hidden, 0.5);
-net.add_synapse(hidden, output, 1.0);
+net.add_synapse(input, hidden, 0.5).unwrap();
+net.add_synapse(hidden, output, 1.0).unwrap();
 
 // Propagate once from the input neuron.
 net.propagate(input, 1.0);
@@ -61,8 +61,8 @@ let mut net = Network::new();
 let a = net.add_input_neuron("a", Activation::Identity);
 let b = net.add_input_neuron("b", Activation::Identity);
 let out = net.add_output_neuron("out", Activation::Sigmoid);
-net.add_synapse(a, out, 1.0);
-net.add_synapse(b, out, 1.0);
+net.add_synapse(a, out, 1.0).unwrap();
+net.add_synapse(b, out, 1.0).unwrap();
 
 net.set_inputs(&[("a", 1.0), ("b", 0.0)]);
 net.propagate_inputs();
@@ -81,7 +81,7 @@ use std::path::Path;
 let mut net = Network::new();
 let a = net.add_input_neuron("a", Activation::Identity);
 let b = net.add_output_neuron("b", Activation::Identity);
-net.add_synapse(a, b, 1.0);
+net.add_synapse(a, b, 1.0).unwrap();
 
 let path = Path::new("network.json");
 net.save_json(path).unwrap();
@@ -120,12 +120,12 @@ let h1 = net.add_neuron_with_activation(Activation::Sigmoid);
 let h2 = net.add_neuron_with_activation(Activation::Sigmoid);
 let o = net.add_neuron_with_activation(Activation::Sigmoid);
 
-net.add_synapse(i1, h1, 0.5);
-net.add_synapse(i1, h2, -0.5);
-net.add_synapse(i2, h1, -0.5);
-net.add_synapse(i2, h2, 0.5);
-net.add_synapse(h1, o, 0.5);
-net.add_synapse(h2, o, 0.5);
+net.add_synapse(i1, h1, 0.5).unwrap();
+net.add_synapse(i1, h2, -0.5).unwrap();
+net.add_synapse(i2, h1, -0.5).unwrap();
+net.add_synapse(i2, h2, 0.5).unwrap();
+net.add_synapse(h1, o, 0.5).unwrap();
+net.add_synapse(h2, o, 0.5).unwrap();
 
 let dataset = [
     (vec![0.0, 0.0], vec![0.0]),
@@ -183,7 +183,7 @@ use aei_framework::{Activation, Network};
 let mut net = Network::new();
 let n1 = net.add_neuron_with_activation(Activation::Sigmoid);
 let n2 = net.add_neuron_with_activation(Activation::ReLU);
-net.add_synapse(n1, n2, 2.0);
+net.add_synapse(n1, n2, 2.0).unwrap();
 
 net.propagate(n1, 1.0);
 println!("Value of neuron {n1} (Sigmoid): {}", net.value(n1).unwrap());
