@@ -70,6 +70,19 @@ let result = net.get_outputs();
 println!("Result: {:?}", result.get("out"));
 ```
 
+## Ajout aléatoire de neurone
+
+Étendez le réseau en insérant un neurone avec une activation et des connexions
+automatiques aléatoires :
+
+```rust
+use aei_framework::Network;
+
+let mut net = Network::new();
+let new_neuron_id = net.add_random_neuron();
+println!("Neurone ajouté : {new_neuron_id}");
+```
+
 ## Sérialisation
 
 Persistez les réseaux sur disque et rechargez-les ensuite en JSON :

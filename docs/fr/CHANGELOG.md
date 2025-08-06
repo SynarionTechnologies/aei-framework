@@ -21,6 +21,8 @@ et ce projet adhère à [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 - Neurones d'entrée/sortie nommés avec les API de haut niveau `set_inputs`, `get_outputs` et `propagate_inputs`
 - Sérialisation et chargement JSON des réseaux via `save_json` et `load_json`
 - Journalisation structurée de la progression de l'entraînement via la crate `log`.
+- Création aléatoire de neurones avec `Network::add_random_neuron` générant des
+  connexions automatiques.
 ### Modifié
 - La logique de propagation applique désormais les activations après les sommes pondérées et réinitialise toutes les valeurs des neurones entre les exécutions.
 - Rustdoc complet pour les modules et les API publiques.

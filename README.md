@@ -70,6 +70,19 @@ let result = net.get_outputs();
 println!("Result: {:?}", result.get("out"));
 ```
 
+## Random Neuron Addition
+
+Grow the network by inserting a neuron with a random activation and automatic
+connections:
+
+```rust
+use aei_framework::Network;
+
+let mut net = Network::new();
+let new_neuron_id = net.add_random_neuron();
+println!("Added neuron: {new_neuron_id}");
+```
+
 ## Serialization
 
 Persist networks to disk and load them back later using JSON:
