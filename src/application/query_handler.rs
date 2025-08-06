@@ -1,8 +1,8 @@
 //! Handles read-side queries against the current state.
 
+use crate::core::Neuron;
 use crate::domain::Network;
 use crate::queries::Query;
-use crate::core::Neuron;
 use uuid::Uuid;
 
 /// Result returned by the [`QueryHandler`].
@@ -38,4 +38,3 @@ impl<'a> QueryHandler<'a> {
         self.network.neurons.get(&id)
     }
 }
-

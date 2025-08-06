@@ -24,4 +24,3 @@ pub enum Event {
     /// A synapse was removed from the network.
     SynapseRemoved { id: Uuid },
 }
-

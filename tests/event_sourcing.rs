@@ -5,8 +5,7 @@ use aei_framework::{
     commands::Command,
     core::Activation,
     infrastructure::FileEventStore,
-    Query,
-    QueryResult,
+    Query, QueryResult,
 };
 use uuid::Uuid;
 
@@ -38,7 +37,7 @@ fn add_and_replay_neuron() {
     // Reload from the same event store and ensure the neuron persists.
     let store = FileEventStore::new(path);
     let handler = CommandHandler::new(store).unwrap();
-    assert!(handler.network.neurons.get(&id).is_some());
+    assert!(handler.network.neurons.contains_key(&id));
 }
 
 #[test]
@@ -71,11 +70,10 @@ fn create_and_remove_synapse() {
             weight: 1.0,
         })
         .unwrap();
-    assert!(handler.network.synapses.get(&syn_id).is_some());
+    assert!(handler.network.synapses.contains_key(&syn_id));
 
     handler
         .handle(Command::RemoveSynapse { id: syn_id })
         .unwrap();
-    assert!(handler.network.synapses.get(&syn_id).is_none());
+    assert!(!handler.network.synapses.contains_key(&syn_id));
 }
-

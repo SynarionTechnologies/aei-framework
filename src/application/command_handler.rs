@@ -26,9 +26,17 @@ impl<S: EventStore> CommandHandler<S> {
         let event = match command {
             Command::AddNeuron { id, activation } => Event::NeuronAdded { id, activation },
             Command::RemoveNeuron { id } => Event::NeuronRemoved { id },
-            Command::CreateSynapse { id, from, to, weight } => {
-                Event::SynapseCreated { id, from, to, weight }
-            }
+            Command::CreateSynapse {
+                id,
+                from,
+                to,
+                weight,
+            } => Event::SynapseCreated {
+                id,
+                from,
+                to,
+                weight,
+            },
             Command::RemoveSynapse { id } => Event::SynapseRemoved { id },
         };
         self.store.append(&event)?;
@@ -36,4 +44,3 @@ impl<S: EventStore> CommandHandler<S> {
         Ok(())
     }
 }
-

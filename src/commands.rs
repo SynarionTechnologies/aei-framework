@@ -20,4 +20,3 @@ pub enum Command {
     /// Delete a synapse by its identifier.
     RemoveSynapse { id: Uuid },
 }
-

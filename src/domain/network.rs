@@ -33,13 +33,11 @@ impl Network {
     pub fn apply(&mut self, event: &Event) {
         match event {
             Event::NeuronAdded { id, activation } => {
-                self.neurons
-                    .insert(*id, Neuron::with_id(*id, *activation));
+                self.neurons.insert(*id, Neuron::with_id(*id, *activation));
             }
             Event::NeuronRemoved { id } => {
                 self.neurons.remove(id);
-                self.synapses
-                    .retain(|_, s| s.from != *id && s.to != *id);
+                self.synapses.retain(|_, s| s.from != *id && s.to != *id);
             }
             Event::SynapseCreated {
                 id,
@@ -48,10 +46,8 @@ impl Network {
                 weight,
             } => {
                 if self.neurons.contains_key(from) && self.neurons.contains_key(to) {
-                    self.synapses.insert(
-                        *id,
-                        Synapse::with_id(*id, *from, *to, *weight),
-                    );
+                    self.synapses
+                        .insert(*id, Synapse::with_id(*id, *from, *to, *weight));
                 }
             }
             Event::SynapseRemoved { id } => {
@@ -66,4 +62,3 @@ impl Network {
         self.neurons.values().collect()
     }
 }
-

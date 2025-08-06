@@ -10,4 +10,3 @@ pub enum Query {
     /// Return all known neurons.
     ListNeurons,
 }
-

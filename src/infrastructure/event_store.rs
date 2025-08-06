@@ -62,4 +62,3 @@ impl EventStore for FileEventStore {
         Ok(events)
     }
 }
-
