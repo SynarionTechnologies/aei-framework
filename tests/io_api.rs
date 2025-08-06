@@ -14,7 +14,7 @@ fn test_named_inputs_outputs() {
     net.add_synapse(b, out, 1.0).unwrap();
 
     net.set_inputs(&[("a", 1.0), ("b", 2.0)]);
-    net.propagate_inputs();
+    net.propagate_inputs().unwrap();
     let outputs = net.get_outputs();
     assert!(approx_eq(outputs["sum"], 3.0));
 }
@@ -29,7 +29,7 @@ fn test_indexed_inputs_outputs() {
     net.add_synapse(b, out, 1.0).unwrap();
 
     net.set_inputs_by_index(&[1.0, 2.0]);
-    net.propagate_inputs();
+    net.propagate_inputs().unwrap();
     let outputs = net.get_outputs_by_index();
     assert!(approx_eq(outputs[0], 3.0));
 }

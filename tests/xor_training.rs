@@ -3,7 +3,7 @@ use aei_framework::{Activation, Network};
 fn loss(net: &mut Network, data: &[(Vec<f64>, Vec<f64>)]) -> f64 {
     data.iter()
         .map(|(inp, out)| {
-            let pred = net.predict(inp);
+            let pred = net.predict(inp).unwrap();
             pred.iter()
                 .zip(out.iter())
                 .map(|(a, b)| {
@@ -40,7 +40,7 @@ fn xor_training_reduces_loss() {
     ];
 
     let initial_loss = loss(&mut net, &dataset);
-    net.train(&dataset, 10000, 0.5);
+    net.train(&dataset, 10000, 0.5).unwrap();
     let final_loss = loss(&mut net, &dataset);
 
     assert!(final_loss < initial_loss);
