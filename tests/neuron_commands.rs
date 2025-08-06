@@ -99,5 +99,5 @@ fn event_replay_reconstructs_state() {
     let mut replay_store = store; // same path
     let events = replay_store.load().unwrap();
     let net = aei_framework::DomainNetwork::hydrate(&events);
-    assert!(net.neurons.get(&id).is_none());
+    assert!(!net.neurons.contains_key(&id));
 }
