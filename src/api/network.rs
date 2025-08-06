@@ -8,7 +8,7 @@ type GraphStructure = (EdgeList, EdgeList, NodeList, NodeList, TopoOrder);
 use std::collections::{HashMap, VecDeque};
 use uuid::Uuid;
 
-use crate::{Activation, Neuron, Synapse};
+use crate::core::{Activation, Neuron, Synapse};
 
 /// Dynamic collection of neurons and synapses forming a directed graph.
 ///
@@ -205,7 +205,7 @@ impl Network {
     ///
     /// # Example
     /// ```
-    /// use aei_framework::{activation::Activation, network::Network};
+    /// use aei_framework::{Activation, Network};
     ///
     /// let mut net = Network::new();
     /// let a = net.add_neuron_with_activation(Activation::Sigmoid);

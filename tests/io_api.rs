@@ -1,4 +1,4 @@
-use aei_framework::{activation::Activation, network::Network};
+use aei_framework::{Activation, Network};
 
 fn approx_eq(a: f64, b: f64) -> bool {
     (a - b).abs() < 1e-8

@@ -1,4 +1,4 @@
-use aei_framework::{activation::Activation, network::Network};
+use aei_framework::{Activation, Network};
 use uuid::Uuid;
 
 // Helper for floating-point comparisons in tests.
