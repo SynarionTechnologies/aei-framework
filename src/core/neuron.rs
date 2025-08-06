@@ -1,13 +1,14 @@
 //! Representation of neurons within a [`Network`].
 
 use crate::Activation;
+use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
 /// Represents a neuron within the network.
 ///
 /// Each neuron has a unique identifier, an activation function and a
 /// floating-point value representing its current state.
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Neuron {
     /// Globally unique identifier of the neuron.
     pub id: Uuid,
