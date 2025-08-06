@@ -1,4 +1,5 @@
 use aei_framework::{activation::Activation, network::Network};
+use uuid::Uuid;
 
 // Helper for floating-point comparisons in tests.
 fn approx_eq(a: f64, b: f64) -> bool {
@@ -44,7 +45,7 @@ fn test_propagate_nonexistent_neuron() {
     let mut net = Network::new();
     let id = net.add_neuron();
 
-    net.propagate(id + 1, 1.0);
+    net.propagate(Uuid::new_v4(), 1.0);
     assert!(approx_eq(net.value(id).unwrap(), 0.0));
 }
 
@@ -53,7 +54,7 @@ fn test_propagate_nonexistent_neuron() {
 fn test_synapse_to_missing_neuron() {
     let mut net = Network::new();
     let src = net.add_neuron();
-    net.add_synapse(src, 999, 1.0);
+    net.add_synapse(src, Uuid::new_v4(), 1.0);
 
     net.propagate(src, 1.0);
     assert!(approx_eq(net.value(src).unwrap(), 1.0));
@@ -64,8 +65,18 @@ fn test_synapse_to_missing_neuron() {
 fn test_orphan_synapse() {
     let mut net = Network::new();
     let existing = net.add_neuron();
-    net.add_synapse(999, existing, 1.0);
+    net.add_synapse(Uuid::new_v4(), existing, 1.0);
 
     net.propagate(existing, 2.0);
     assert!(approx_eq(net.value(existing).unwrap(), 2.0));
+}
+
+/// Neuron identifiers remain stable through string serialization.
+#[test]
+fn test_uuid_round_trip() {
+    let mut net = Network::new();
+    let id = net.add_neuron();
+    let s = id.to_string();
+    let parsed = Uuid::parse_str(&s).unwrap();
+    assert_eq!(id, parsed);
 }

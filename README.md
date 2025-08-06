@@ -70,6 +70,23 @@ let result = net.get_outputs();
 println!("Result: {:?}", result.get("out"));
 ```
 
+## Identifiers
+
+Every neuron and synapse receives a random [`Uuid`](https://docs.rs/uuid) when
+created. These globally unique identifiers improve serialization and allow
+merging networks without collisions. Constructors such as
+`Neuron::with_id` and `Network::add_neuron_with_id` let you supply explicit
+identifiers if needed:
+
+```rust
+use aei_framework::{Activation, Neuron};
+use uuid::Uuid;
+
+let id = Uuid::new_v4();
+let neuron = Neuron::with_id(id, Activation::Sigmoid);
+println!("Neuron {id} has value {}", neuron.value);
+```
+
 ## Learning XOR
 
 Train a small network to approximate the XOR truth table using
@@ -136,7 +153,8 @@ activation, either instantiate a [`Neuron`] directly or use
 ```rust
 use aei_framework::{Activation, Neuron};
 
-let neuron = Neuron::new(1, Activation::Tanh);
+let neuron = Neuron::new(Activation::Tanh);
+println!("Neuron id: {}", neuron.id);
 ```
 
 ## Example: Multi-Activation Network
@@ -196,7 +214,7 @@ Distributed under the Mozilla Public License 2.0. See [LICENSE](LICENSE) for mor
 
 ## Known Limitations
 
-- Neuron identifiers are numeric and local to a network. Each neuron now also
-  stores a `Uuid` but it is not yet used as the primary key.
+- Neuron and synapse identifiers use `Uuid`. Networks serialized with older
+  numeric identifiers are not supported.
 - No persistence or serialization layer is currently provided.
 - Layered abstractions and neuron removal are planned but not implemented.
