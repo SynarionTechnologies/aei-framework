@@ -1,6 +1,5 @@
 use aei_framework::{Activation, Network};
 use std::fs;
-use std::path::Path;
 
 #[test]
 fn network_json_roundtrip() {
@@ -9,11 +8,12 @@ fn network_json_roundtrip() {
     let out = net.add_output_neuron("out", Activation::Identity);
     net.add_synapse(inp, out, 1.5);
 
-    let path = Path::new("/tmp/net.json");
-    net.save_json(path).unwrap();
+    let mut path = std::env::temp_dir();
+    path.push("net.json");
+    net.save_json(&path).unwrap();
 
-    let mut loaded = Network::load_json(path).unwrap();
-    fs::remove_file(path).ok();
+    let mut loaded = Network::load_json(&path).unwrap();
+    fs::remove_file(&path).ok();
 
     loaded.set_inputs(&[("in", 2.0)]);
     loaded.propagate_inputs();
