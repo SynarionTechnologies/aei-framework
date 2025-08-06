@@ -47,7 +47,7 @@ pub enum NetworkError {
     /// A provided neuron identifier does not exist in the network.
     UnknownNeuron,
     /// The network contains a cycle and cannot be processed.
-    CycleDetected
+    CycleDetected,
 }
 
 impl std::fmt::Display for NetworkError {
