@@ -50,6 +50,26 @@ println!("Hidden neuron value: {}", net.value(hidden).unwrap());
 println!("Output neuron value: {}", net.value(output).unwrap());
 ```
 
+## Named Inputs and Outputs
+
+Explicitly assign neurons as inputs or outputs and interact with them by name:
+
+```rust
+use aei_framework::{Activation, Network};
+
+let mut net = Network::new();
+let a = net.add_input_neuron("a", Activation::Identity);
+let b = net.add_input_neuron("b", Activation::Identity);
+let out = net.add_output_neuron("out", Activation::Sigmoid);
+net.add_synapse(a, out, 1.0);
+net.add_synapse(b, out, 1.0);
+
+net.set_inputs(&[("a", 1.0), ("b", 0.0)]);
+net.propagate_inputs();
+let result = net.get_outputs();
+println!("Result: {:?}", result.get("out"));
+```
+
 ## Learning XOR
 
 Train a small network to approximate the XOR truth table using

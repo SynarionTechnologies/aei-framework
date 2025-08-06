@@ -18,6 +18,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Propagation unit tests
 - Documentation and guides in English
 - Tests covering all activation functions and chained propagation
+- Named input/output neurons with high-level `set_inputs`, `get_outputs`, and
+  `propagate_inputs` APIs
 ### Changed
 - Propagation logic now applies activations after weighted sums and resets all
   neuron values between runs.
