@@ -8,7 +8,6 @@ use std::fs::File;
 use std::io;
 use std::path::Path;
 
-use rand::{seq::SliceRandom, Rng};
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
@@ -113,105 +112,6 @@ impl Network {
         self.neuron_indices.insert(id, self.neurons.len());
         self.neurons.push(neuron);
         id
-    }
-
-    /// Adds a neuron with a random activation and random synaptic connections.
-    ///
-    /// The new neuron is not marked as an input or output. At least one
-    /// synapse is created either from an existing non-input/output neuron to the
-    /// new neuron or from the new neuron to such an existing neuron. Synapse
-    /// weights are drawn uniformly from `[-1.0, 1.0]`.
-    ///
-    /// Returns the identifier assigned to the new neuron.
-    pub fn add_random_neuron(&mut self) -> Uuid {
-        use Activation::*;
-        let mut rng = rand::thread_rng();
-        let activations = [Identity, Sigmoid, ReLU, Tanh];
-        let activation = *activations.choose(&mut rng).unwrap();
-
-        let id = self.add_neuron_with_activation(activation);
-
-        let mut candidates: Vec<Uuid> = self
-            .neurons
-            .iter()
-            .map(|n| n.id)
-            .filter(|&nid| {
-                nid != id
-                    && !self.input_neurons.values().any(|&i| i == nid)
-                    && !self.output_neurons.values().any(|&o| o == nid)
-            })
-            .collect();
-
-        if !candidates.is_empty() {
-            candidates.shuffle(&mut rng);
-            let num_synapses = rng.gen_range(1..=candidates.len());
-            for target in candidates.into_iter().take(num_synapses) {
-                let weight = rng.gen_range(-1.0..=1.0);
-                if rng.gen_bool(0.5) {
-                    let _ = self.add_synapse(target, id, weight);
-                } else {
-                    let _ = self.add_synapse(id, target, weight);
-                }
-            }
-        }
-
-        id
-    }
-
-    /// Removes a random neuron that is neither an input nor an output.
-    ///
-    /// All synapses connected to the removed neuron are also deleted.
-    ///
-    /// Returns the identifier of the removed neuron or `None` if no
-    /// removable neuron exists.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use aei_framework::{Activation, Network};
-    ///
-    /// let mut net = Network::new();
-    /// net.add_input_neuron("in", Activation::Identity);
-    /// let hidden = net.add_neuron();
-    /// net.add_output_neuron("out", Activation::Identity);
-    /// assert_eq!(net.remove_random_neuron(), Some(hidden));
-    /// ```
-    pub fn remove_random_neuron(&mut self) -> Option<Uuid> {
-        let candidates: Vec<Uuid> = self
-            .neurons
-            .iter()
-            .map(|n| n.id)
-            .filter(|&id| {
-                !self.input_neurons.values().any(|&i| i == id)
-                    && !self.output_neurons.values().any(|&o| o == id)
-            })
-            .collect();
-
-        if candidates.is_empty() {
-            return None;
-        }
-
-        let mut rng = rand::thread_rng();
-        let id = *candidates.choose(&mut rng).unwrap();
-
-        // Remove all associated synapses.
-        self.synapses.retain(|s| s.from != id && s.to != id);
-
-        // Remove the neuron itself using swap_remove to keep contiguous storage.
-        if let Some(idx) = self.neuron_indices.remove(&id) {
-            self.neurons.swap_remove(idx);
-            if idx < self.neurons.len() {
-                let swapped_id = self.neurons[idx].id;
-                self.neuron_indices.insert(swapped_id, idx);
-            }
-        }
-
-        // Clean up any cached values.
-        self.input_order.retain(|&nid| nid != id);
-        self.output_order.retain(|&nid| nid != id);
-        self.input_buffer.remove(&id);
-
-        Some(id)
     }
 
     /// Adds a neuron designated as an input with the given `name` and `activation`.

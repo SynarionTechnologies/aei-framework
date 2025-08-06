@@ -6,7 +6,7 @@
 use std::collections::HashMap;
 
 use crate::core::{Neuron, Synapse};
-use crate::events::{Event, RandomSynapseAdded};
+use crate::events::{Event, RandomNeuronAdded, RandomNeuronRemoved, RandomSynapseAdded};
 use uuid::Uuid;
 
 /// Aggregate root containing all neurons and synapses.
@@ -32,12 +32,11 @@ impl Network {
     /// Applies a domain event to mutate the aggregate state.
     pub fn apply(&mut self, event: &Event) {
         match event {
-            Event::NeuronAdded { id, activation } => {
-                self.neurons.insert(*id, Neuron::with_id(*id, *activation));
+            Event::RandomNeuronAdded(e) => {
+                self.apply_random_neuron_added(e);
             }
-            Event::NeuronRemoved { id } => {
-                self.neurons.remove(id);
-                self.synapses.retain(|_, s| s.from != *id && s.to != *id);
+            Event::RandomNeuronRemoved(e) => {
+                self.apply_random_neuron_removed(e);
             }
             Event::SynapseCreated {
                 id,
@@ -57,6 +56,21 @@ impl Network {
                 self.apply_random_synapse_added(e);
             }
         }
+    }
+
+    /// Applies a [`RandomNeuronAdded`] event to the network state.
+    fn apply_random_neuron_added(&mut self, event: &RandomNeuronAdded) {
+        self.neurons.insert(
+            event.neuron_id,
+            Neuron::with_id(event.neuron_id, event.activation),
+        );
+    }
+
+    /// Applies a [`RandomNeuronRemoved`] event to the network state.
+    fn apply_random_neuron_removed(&mut self, event: &RandomNeuronRemoved) {
+        self.neurons.remove(&event.neuron_id);
+        self.synapses
+            .retain(|_, s| s.from != event.neuron_id && s.to != event.neuron_id);
     }
 
     /// Applies a [`RandomSynapseAdded`] event to the network state.

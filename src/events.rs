@@ -10,10 +10,10 @@ use uuid::Uuid;
 /// Business events emitted by command handlers.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub enum Event {
-    /// A neuron was added to the network.
-    NeuronAdded { id: Uuid, activation: Activation },
+    /// A neuron was added to the network with a random activation.
+    RandomNeuronAdded(RandomNeuronAdded),
     /// A neuron was removed from the network.
-    NeuronRemoved { id: Uuid },
+    RandomNeuronRemoved(RandomNeuronRemoved),
     /// A synapse connecting two neurons was created.
     SynapseCreated {
         id: Uuid,
@@ -25,6 +25,22 @@ pub enum Event {
     SynapseRemoved { id: Uuid },
     /// A synapse between two randomly selected neurons was added.
     RandomSynapseAdded(RandomSynapseAdded),
+}
+
+/// Event emitted when a random neuron is added to the network.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct RandomNeuronAdded {
+    /// Identifier of the created neuron.
+    pub neuron_id: Uuid,
+    /// Activation assigned to the neuron.
+    pub activation: Activation,
+}
+
+/// Event emitted when a random neuron is removed from the network.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct RandomNeuronRemoved {
+    /// Identifier of the removed neuron.
+    pub neuron_id: Uuid,
 }
 
 /// Event emitted when a random synapse is created between two existing neurons.
