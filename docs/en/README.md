@@ -83,6 +83,21 @@ let new_neuron_id = net.add_random_neuron();
 println!("Added neuron: {new_neuron_id}");
 ```
 
+## Random Neuron Removal
+
+Shrink the network by deleting a random internal neuron along with all its
+connections:
+
+```rust
+use aei_framework::Network;
+
+let mut net = Network::new();
+// ... initialize the network ...
+if let Some(removed_id) = net.remove_random_neuron() {
+    println!("Removed neuron: {removed_id}");
+}
+```
+
 ## Serialization
 
 Persist networks to disk and load them back later using JSON:
@@ -275,4 +290,4 @@ Distributed under the Mozilla Public License 2.0. See [LICENSE](LICENSE) for mor
 - Neuron and synapse identifiers use `Uuid`. Networks serialized with older
   numeric identifiers are not supported.
 - JSON persistence is available via `save_json` and `load_json`.
-- Layered abstractions and neuron removal are planned but not implemented.
+- Layered abstractions are planned but not implemented.
