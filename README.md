@@ -255,12 +255,28 @@ With a logger configured, progress from functions like `Network::train` will be 
 src/
   core/        # activation, neuron, synapse primitives
   api/         # network implementation and public API
+  domain/      # event-sourced aggregates
+  events/      # domain events
+  commands.rs  # write-side commands
+  queries.rs   # read-side queries
+  application/ # command and query handlers
+  infrastructure/ # adapters such as the event store
 examples/
 tests/
 docs/
   en/
   fr/
 ```
+
+## Architecture Overview
+
+AEIF follows Domain-Driven Design with Event Sourcing and CQRS. State-changing
+operations are expressed as **commands** which are turned into immutable
+**events** and appended to an event log. Aggregates such as the `domain::Network`
+replay these events to rebuild their state. Read operations are served through
+separate **queries** handled by lightweight projections. This separation keeps
+the write path append-only and enables full traceability of the network's
+evolution.
 
 ## Documentation
 
