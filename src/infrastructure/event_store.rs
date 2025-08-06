@@ -41,7 +41,7 @@ impl EventStore for FileEventStore {
             .append(true)
             .open(&self.path)?;
         let json = serde_json::to_string(event).map_err(io::Error::other)?;
-        writeln!(file, "{}", json)
+        writeln!(file, "{json}")
     }
 
     fn load(&mut self) -> Result<Vec<Event>, Self::Error> {
