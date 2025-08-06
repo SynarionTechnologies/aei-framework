@@ -41,6 +41,23 @@ pub struct Network {
     input_buffer: HashMap<Uuid, f64>,
 }
 
+/// Errors that can occur when manipulating a [`Network`].
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub enum NetworkError {
+    /// A provided neuron identifier does not exist in the network.
+    UnknownNeuron,
+}
+
+impl std::fmt::Display for NetworkError {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            Self::UnknownNeuron => write!(f, "unknown neuron"),
+        }
+    }
+}
+
+impl std::error::Error for NetworkError {}
+
 impl Network {
     /// Creates an empty network.
     pub fn new() -> Self {
@@ -118,20 +135,32 @@ impl Network {
 
     /// Adds a directed synapse between two neuron identifiers.
     ///
-    /// If either identifier does not correspond to an existing neuron the
-    /// synapse is still recorded but will have no effect during propagation.
-    pub fn add_synapse(&mut self, from: Uuid, to: Uuid, weight: f64) -> Uuid {
+    /// Returns an error if either identifier does not correspond to an existing
+    /// neuron.
+    pub fn add_synapse(&mut self, from: Uuid, to: Uuid, weight: f64) -> Result<Uuid, NetworkError> {
+        if !self.neuron_indices.contains_key(&from) || !self.neuron_indices.contains_key(&to) {
+            return Err(NetworkError::UnknownNeuron);
+        }
         let syn = Synapse::new(from, to, weight);
         let id = syn.id;
         self.synapses.push(syn);
-        id
+        Ok(id)
     }
 
     /// Adds a synapse with an explicit [`Uuid`].
-    pub fn add_synapse_with_id(&mut self, id: Uuid, from: Uuid, to: Uuid, weight: f64) -> Uuid {
+    pub fn add_synapse_with_id(
+        &mut self,
+        id: Uuid,
+        from: Uuid,
+        to: Uuid,
+        weight: f64,
+    ) -> Result<Uuid, NetworkError> {
+        if !self.neuron_indices.contains_key(&from) || !self.neuron_indices.contains_key(&to) {
+            return Err(NetworkError::UnknownNeuron);
+        }
         let syn = Synapse::with_id(id, from, to, weight);
         self.synapses.push(syn);
-        id
+        Ok(id)
     }
 
     /// Assigns values to input neurons identified by name.
@@ -241,7 +270,7 @@ impl Network {
     /// let mut net = Network::new();
     /// let a = net.add_neuron_with_activation(Activation::Sigmoid);
     /// let b = net.add_neuron_with_activation(Activation::ReLU);
-    /// net.add_synapse(a, b, 2.0);
+    /// net.add_synapse(a, b, 2.0).unwrap();
     /// net.propagate(a, 1.0);
     /// ```
     pub fn propagate(&mut self, start: Uuid, value: f64) {
