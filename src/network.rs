@@ -24,6 +24,16 @@ pub struct Network {
     synapses: Vec<Synapse>,
     /// Identifier assigned to the next neuron added to the network.
     next_id: usize,
+    /// Mapping from logical input names to internal neuron ids.
+    pub input_neurons: HashMap<String, usize>,
+    /// Mapping from logical output names to internal neuron ids.
+    pub output_neurons: HashMap<String, usize>,
+    /// Ordered list of input neuron ids for index-based access.
+    input_order: Vec<usize>,
+    /// Ordered list of output neuron ids for index-based access.
+    output_order: Vec<usize>,
+    /// Temporary storage for values set through [`set_inputs`] before propagation.
+    input_buffer: HashMap<usize, f64>,
 }
 
 impl Network {
@@ -47,12 +57,104 @@ impl Network {
         id
     }
 
+    /// Adds a neuron designated as an input with the given `name` and `activation`.
+    ///
+    /// Returns the internal identifier assigned to the new neuron.
+    pub fn add_input_neuron(&mut self, name: &str, activation: Activation) -> usize {
+        let id = self.add_neuron_with_activation(activation);
+        self.input_neurons.insert(name.to_string(), id);
+        self.input_order.push(id);
+        id
+    }
+
+    /// Adds a neuron designated as an output with the given `name` and `activation`.
+    ///
+    /// Returns the internal identifier assigned to the new neuron.
+    pub fn add_output_neuron(&mut self, name: &str, activation: Activation) -> usize {
+        let id = self.add_neuron_with_activation(activation);
+        self.output_neurons.insert(name.to_string(), id);
+        self.output_order.push(id);
+        id
+    }
+
     /// Adds a directed synapse between two neuron identifiers.
     ///
     /// If either identifier does not correspond to an existing neuron the
     /// synapse is still recorded but will have no effect during propagation.
     pub fn add_synapse(&mut self, from: usize, to: usize, weight: f64) {
         self.synapses.push(Synapse::new(from, to, weight));
+    }
+
+    /// Assigns values to input neurons identified by name.
+    pub fn set_inputs(&mut self, values: &[(&str, f64)]) {
+        for (name, value) in values {
+            if let Some(&id) = self.input_neurons.get(*name) {
+                self.input_buffer.insert(id, *value);
+            }
+        }
+    }
+
+    /// Assigns values to input neurons by their logical index.
+    pub fn set_inputs_by_index(&mut self, values: &[f64]) {
+        assert_eq!(
+            values.len(),
+            self.input_order.len(),
+            "input length mismatch"
+        );
+        for (&id, &value) in self.input_order.iter().zip(values.iter()) {
+            self.input_buffer.insert(id, value);
+        }
+    }
+
+    /// Propagates previously assigned inputs through the network.
+    pub fn propagate_inputs(&mut self) {
+        let (incoming, _outgoing, _auto_inputs, _auto_outputs, order) = self.graph_structure();
+        let mut values = vec![0.0; self.next_id];
+        let mut is_input = vec![false; self.next_id];
+
+        for &id in self.input_neurons.values() {
+            let activation = self.neurons.get(&id).unwrap().activation;
+            let v = *self.input_buffer.get(&id).unwrap_or(&0.0);
+            values[id] = activation.apply(v);
+            is_input[id] = true;
+        }
+
+        for &id in &order {
+            if is_input[id] {
+                continue;
+            }
+            let sum: f64 = incoming[id]
+                .iter()
+                .map(|&(idx, from)| values[from] * self.synapses[idx].weight)
+                .sum();
+            if let Some(n) = self.neurons.get(&id) {
+                values[id] = n.activation.apply(sum);
+            }
+        }
+
+        for (id, &v) in values.iter().enumerate().take(self.next_id) {
+            if let Some(n) = self.neurons.get_mut(&id) {
+                n.value = v;
+            }
+        }
+
+        self.input_buffer.clear();
+    }
+
+    /// Returns the values of all output neurons identified by name.
+    pub fn get_outputs(&self) -> HashMap<String, f64> {
+        self.output_neurons
+            .iter()
+            .filter_map(|(name, &id)| self.neurons.get(&id).map(|n| (name.clone(), n.value)))
+            .collect()
+    }
+
+    /// Returns the values of all output neurons ordered by their logical index.
+    pub fn get_outputs_by_index(&self) -> Vec<f64> {
+        self.output_order
+            .iter()
+            .map(|&id| self.neurons.get(&id).map_or(0.0, |n| n.value))
+            .collect()
     }
 
     /// Propagates a value through the network starting from `start`.
