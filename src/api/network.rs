@@ -477,7 +477,7 @@ impl Network {
             }
 
             let avg_loss = epoch_loss / dataset.len() as f64;
-            println!("Epoch {}/{} - loss: {}", epoch + 1, epochs, avg_loss);
+            log::info!("Epoch {}/{} - loss: {}", epoch + 1, epochs, avg_loss);
         }
         Ok(())
     }

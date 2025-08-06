@@ -21,6 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Named input/output neurons with high-level `set_inputs`, `get_outputs`, and
   `propagate_inputs` APIs
 - JSON serialization and loading for networks via `save_json` and `load_json`
+- Structured logging of training progress via the `log` crate.
 ### Changed
 - Propagation logic now applies activations after weighted sums and resets all
   neuron values between runs.

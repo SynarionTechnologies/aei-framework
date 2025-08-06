@@ -211,6 +211,16 @@ ordered steps:
 This sequence guarantees that each neuron is activated exactly once per
 propagation and that previous runs do not leak into the next one.
 
+## Logging
+
+The framework emits informational messages using the [`log`](https://docs.rs/log) crate. To see these logs, initialize a logger implementation such as [`env_logger`](https://docs.rs/env_logger) in your application:
+
+```rust
+env_logger::init();
+```
+
+With a logger configured, progress from functions like `Network::train` will be reported at the `info` level.
+
 ## Project Structure
 
 ```

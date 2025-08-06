@@ -211,6 +211,16 @@ sa fonction d'activation pour produire la nouvelle sortie.
 Cette séquence garantit que chaque neurone est activé exactement une fois par
 La propagation et que les courses précédentes ne fuient pas dans la suivante.
 
+## Journalisation
+
+Le framework émet des messages d'information via la crate [`log`](https://docs.rs/log). Pour afficher ces journaux, initialisez une implémentation de logger comme [`env_logger`](https://docs.rs/env_logger) dans votre application :
+
+```rust
+env_logger::init();
+```
+
+Avec un logger configuré, la progression de fonctions comme `Network::train` sera rapportée au niveau `info`.
+
 ## Structure du projet
 
 ```
