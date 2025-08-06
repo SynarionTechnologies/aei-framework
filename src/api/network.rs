@@ -50,15 +50,13 @@ impl Network {
     /// Saves the network as pretty JSON to the specified file path.
     pub fn save_json<P: AsRef<Path>>(&self, path: P) -> io::Result<()> {
         let file = File::create(path)?;
-        serde_json::to_writer_pretty(file, self)
-            .map_err(|e| io::Error::new(io::ErrorKind::Other, e))
+        serde_json::to_writer_pretty(file, self).map_err(io::Error::other)
     }
 
     /// Loads a network from a JSON file created by [`save_json`].
     pub fn load_json<P: AsRef<Path>>(path: P) -> io::Result<Self> {
         let file = File::open(path)?;
-        let mut net: Network =
-            serde_json::from_reader(file).map_err(|e| io::Error::new(io::ErrorKind::Other, e))?;
+        let mut net: Network = serde_json::from_reader(file).map_err(io::Error::other)?;
         net.rebuild_indices();
         Ok(net)
     }
