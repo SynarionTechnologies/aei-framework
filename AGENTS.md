@@ -28,7 +28,15 @@ This file defines mandatory guidelines for Codex and any future AI assistant con
 
 ## Documentation Requirements
 1. **Rustdoc**
-   - Provide `///` comments for public items.
+    - All public functions, methods, structs, enums, and traits MUST include comprehensive Rustdoc comments.
+    - These comments MUST provide :
+       - A clear summary of the item's purpose and behavior.
+       - Details on arguments (# Arguments), return values (# Returns), and potential errors (# Errors), where relevant.
+       - At least one usage example under # Examples that compiles and passes tests.
+       - Any additional sections (# Panics, # Safety, # Notes) as appropriate.
+       - Examples should be provided for all core public APIs.
+       - Structs, enums, and traits must also include a summary and usage examples illustrating typical scenarios.
+   - These guidelines ensure all contributors, users, and tools benefit from clear, actionable, and tested documentation.
 2. **Usage Guides**
    - Add or update documentation in `/docs/en/`.
    - Translate and maintain parity in `/docs/fr/` (and other languages if present).
@@ -36,7 +44,14 @@ This file defines mandatory guidelines for Codex and any future AI assistant con
    - Update when changes impact the overall project.
 4. **Consistency**
    - Documentation across languages must remain synchronized.
-
+5. **GLOSSARY**
+   - A bilingual Glossary (GLOSSARY.md and /docs/fr/GLOSSARY.md) MUST be maintained to explain all domain-specific and technical terms used throughout the project.
+   - Every new or updated term (domain concepts, architectural patterns, acronyms, technical vocabulary, etc.) MUST be added to both the English and French glossaries.
+   - Glossary entries should provide clear, concise, and context-appropriate definitions.
+   - Whenever possible, usage examples or references to relevant documentation should be included.
+   - Glossaries MUST remain synchronized in both languages.
+   - This ensures clarity, onboarding ease, and consistent understanding for all contributors and users, regardless of language.
+  
 ---
 
 ## Testing Requirements
