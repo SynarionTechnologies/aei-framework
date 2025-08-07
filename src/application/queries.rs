@@ -11,4 +11,6 @@ pub enum Query {
     ListNeurons,
     /// Return all known synapses.
     ListSynapses,
+    /// Fetch a synapse by identifier.
+    GetSynapse { id: Uuid },
 }

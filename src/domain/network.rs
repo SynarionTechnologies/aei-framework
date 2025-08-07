@@ -7,6 +7,7 @@ use std::collections::HashMap;
 
 use super::events::{
     Event, RandomNeuronAdded, RandomNeuronRemoved, RandomSynapseAdded, RandomSynapseRemoved,
+    SynapseWeightMutated,
 };
 use super::{Neuron, Synapse};
 use uuid::Uuid;
@@ -60,6 +61,9 @@ impl Network {
             Event::RandomSynapseRemoved(e) => {
                 self.apply_random_synapse_removed(e);
             }
+            Event::SynapseWeightMutated(e) => {
+                self.apply_synapse_weight_mutated(e);
+            }
         }
     }
 
@@ -98,6 +102,13 @@ impl Network {
     /// Applies a [`RandomSynapseRemoved`] event to the network state.
     fn apply_random_synapse_removed(&mut self, event: &RandomSynapseRemoved) {
         self.synapses.remove(&event.synapse_id);
+    }
+
+    /// Applies a [`SynapseWeightMutated`] event to the network state.
+    fn apply_synapse_weight_mutated(&mut self, event: &SynapseWeightMutated) {
+        if let Some(synapse) = self.synapses.get_mut(&event.synapse_id) {
+            synapse.weight = event.new_weight;
+        }
     }
 
     /// Convenience method to list all neurons.

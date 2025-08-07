@@ -40,4 +40,9 @@ impl NetworkProjection {
     pub fn synapses(&self) -> Vec<&Synapse> {
         self.network.synapses()
     }
+
+    /// Fetches a synapse by its identifier.
+    pub fn synapse(&self, id: Uuid) -> Option<&Synapse> {
+        self.network.synapses.get(&id)
+    }
 }

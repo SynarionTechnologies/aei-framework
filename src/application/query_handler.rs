@@ -13,6 +13,8 @@ pub enum QueryResult<'a> {
     Neurons(Vec<&'a Neuron>),
     /// Listing of all synapses.
     Synapses(Vec<&'a Synapse>),
+    /// Single synapse lookup.
+    Synapse(Option<&'a Synapse>),
 }
 
 /// Provides read-only access to the network state.
@@ -32,6 +34,7 @@ impl<'a> QueryHandler<'a> {
             Query::GetNeuron { id } => QueryResult::Neuron(self.projection.neuron(id)),
             Query::ListNeurons => QueryResult::Neurons(self.projection.neurons()),
             Query::ListSynapses => QueryResult::Synapses(self.projection.synapses()),
+            Query::GetSynapse { id } => QueryResult::Synapse(self.projection.synapse(id)),
         }
     }
 
@@ -39,5 +42,11 @@ impl<'a> QueryHandler<'a> {
     #[must_use]
     pub fn neuron(&self, id: Uuid) -> Option<&'a Neuron> {
         self.projection.neuron(id)
+    }
+
+    /// Convenience method to fetch a synapse directly.
+    #[must_use]
+    pub fn synapse(&self, id: Uuid) -> Option<&'a Synapse> {
+        self.projection.synapse(id)
     }
 }

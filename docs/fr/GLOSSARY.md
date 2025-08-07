@@ -55,3 +55,9 @@ Commande qui crée une synapse entre deux neurones choisis aléatoirement. Impl�
 
 ## RemoveRandomSynapseCommand
 Commande demandant la suppression d'une synapse aléatoire du réseau. Implémentée dans [src/application/add_random_synapse.rs](../../src/application/remove_random_synapse.rs).
+
+### MutateRandomSynapseWeightCommand
+Commande qui applique un bruit gaussien au poids d'une synapse choisie aléatoirement. Implémentée dans [src/application/mutate_random_synapse_weight.rs](../../src/application/mutate_random_synapse_weight.rs).
+
+### SynapseWeightMutated
+Événement de domaine enregistrant la modification du poids d'une synapse. Émis par `MutateRandomSynapseWeightHandler`.

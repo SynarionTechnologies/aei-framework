@@ -7,12 +7,14 @@ pub mod infrastructure;
 
 pub use application::{
     AddRandomNeuronCommand, AddRandomNeuronError, AddRandomNeuronHandler, AddRandomSynapseCommand,
-    AddRandomSynapseError, AddRandomSynapseHandler, Command, CommandHandler, Query, QueryHandler,
-    QueryResult, RemoveRandomNeuronCommand, RemoveRandomNeuronError, RemoveRandomNeuronHandler,
-    RemoveRandomSynapseCommand, RemoveRandomSynapseError, RemoveRandomSynapseHandler,
+    AddRandomSynapseError, AddRandomSynapseHandler, Command, CommandHandler,
+    MutateRandomSynapseWeightCommand, MutateRandomSynapseWeightError,
+    MutateRandomSynapseWeightHandler, Query, QueryHandler, QueryResult, RemoveRandomNeuronCommand,
+    RemoveRandomNeuronError, RemoveRandomNeuronHandler, RemoveRandomSynapseCommand,
+    RemoveRandomSynapseError, RemoveRandomSynapseHandler,
 };
 pub use domain::{
     Activation, Event, Network as DomainNetwork, Neuron, RandomNeuronAdded, RandomNeuronRemoved,
-    RandomSynapseAdded, RandomSynapseRemoved, Synapse,
+    RandomSynapseAdded, RandomSynapseRemoved, Synapse, SynapseWeightMutated,
 };
 pub use infrastructure::{EventStore, FileEventStore};

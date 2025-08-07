@@ -83,6 +83,26 @@ if let Ok(removed_id) = handler.handle(RemoveRandomSynapseCommand) {
 }
 ```
 
+## Random Synapse Weight Mutation
+
+Mutate an existing synapse by adding Gaussian noise to its weight:
+
+```rust
+use aei_framework::{
+    MutateRandomSynapseWeightCommand, MutateRandomSynapseWeightHandler, FileEventStore,
+};
+use rand::thread_rng;
+use std::path::PathBuf;
+
+let store = FileEventStore::new(PathBuf::from("events.log"));
+let mut handler = MutateRandomSynapseWeightHandler::new(store, thread_rng()).unwrap();
+if let Ok(synapse_id) =
+    handler.handle(MutateRandomSynapseWeightCommand { std_dev: 0.1 })
+{
+    println!("Mutated synapse: {synapse_id}");
+}
+```
+
 ## Logging
 
 The framework emits informational messages using the [`log`](https://docs.rs/log) crate. To see these logs, initialize a logger implementation such as [`env_logger`](https://docs.rs/env_logger) in your application:
@@ -118,6 +138,23 @@ docs/
   en/
   fr/
 ```
+
+## Architecture Overview
+
+AEIF follows Domain-Driven Design with Event Sourcing and CQRS. State-changing
+operations are expressed as **commands** which are turned into immutable
+**events** and appended to an event log. Aggregates such as the `domain::Network`
+replay these events to rebuild their state. Read operations are served through
+separate **queries** handled by projections located under
+`infrastructure/projection`. This separation keeps the write path append-only
+and enables full traceability of the network's evolution.
+
+**Command → Event → Apply → Projection**
+
+1. A command expresses intent to mutate state.
+2. The handler emits and persists a domain event.
+3. The aggregate applies the event to update its state.
+4. Projections consume the event to refresh read models.
 
 ## Documentation
 
