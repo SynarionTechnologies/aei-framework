@@ -25,6 +25,8 @@ pub enum Event {
     SynapseRemoved { id: Uuid },
     /// A synapse between two randomly selected neurons was added.
     RandomSynapseAdded(RandomSynapseAdded),
+    /// A randomly chosen synapse was removed from the network.
+    RandomSynapseRemoved(RandomSynapseRemoved),
 }
 
 /// Event emitted when a random neuron is added to the network.
@@ -54,4 +56,11 @@ pub struct RandomSynapseAdded {
     pub to: Uuid,
     /// Weight associated with the synapse.
     pub weight: f64,
+}
+
+/// Event emitted when a random synapse is removed from the network.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct RandomSynapseRemoved {
+    /// Identifier of the removed synapse.
+    pub synapse_id: Uuid,
 }

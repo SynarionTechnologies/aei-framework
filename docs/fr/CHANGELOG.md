@@ -27,6 +27,8 @@ et ce projet adhère à [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
   `AddRandomNeuronHandler`.
 - Suppression aléatoire de neurone orientée événements via `RemoveRandomNeuronCommand` et
   `RemoveRandomNeuronHandler`.
+- Suppression aléatoire de synapse orientée événements via `RemoveRandomSynapseCommand` et
+  `RemoveRandomSynapseHandler`.
 ### Modifié
 - Les commandes et requêtes résident désormais dans le module `application`.
 - Les événements de domaine ont été déplacés sous `domain` et exposés via `domain::events`.

@@ -9,9 +9,10 @@ pub use application::{
     AddRandomNeuronCommand, AddRandomNeuronError, AddRandomNeuronHandler, AddRandomSynapseCommand,
     AddRandomSynapseError, AddRandomSynapseHandler, Command, CommandHandler, Query, QueryHandler,
     QueryResult, RemoveRandomNeuronCommand, RemoveRandomNeuronError, RemoveRandomNeuronHandler,
+    RemoveRandomSynapseCommand, RemoveRandomSynapseError, RemoveRandomSynapseHandler,
 };
 pub use domain::{
     Activation, Event, Network as DomainNetwork, Neuron, RandomNeuronAdded, RandomNeuronRemoved,
-    RandomSynapseAdded, Synapse,
+    RandomSynapseAdded, RandomSynapseRemoved, Synapse,
 };
 pub use infrastructure::{EventStore, FileEventStore};
