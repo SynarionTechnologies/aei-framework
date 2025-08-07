@@ -4,6 +4,7 @@ mod add_random_neuron;
 mod add_random_synapse;
 mod command_handler;
 mod commands;
+mod mutate_random_synapse_weight;
 mod queries;
 mod query_handler;
 mod remove_random_neuron;
@@ -15,6 +16,10 @@ pub use add_random_synapse::{
 };
 pub use command_handler::CommandHandler;
 pub use commands::Command;
+pub use mutate_random_synapse_weight::{
+    MutateRandomSynapseWeightCommand, MutateRandomSynapseWeightError,
+    MutateRandomSynapseWeightHandler,
+};
 pub use queries::Query;
 pub use query_handler::{QueryHandler, QueryResult};
 pub use remove_random_neuron::{

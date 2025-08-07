@@ -7,6 +7,7 @@ et ce projet adhère à [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Non publié]
 ### Ajouté
+- Mutation aléatoire du poids des synapses via `MutateRandomSynapseWeightCommand` et `MutateRandomSynapseWeightHandler`.
 - Exemple orienté événements et tests de commande de synapse.
 - Entraînement par rétropropagation avec `Network::train` et `Network::predict`
 - Dérivées des fonctions d'activation permettant la descente de gradient
