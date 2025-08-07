@@ -281,6 +281,11 @@ With a logger configured, progress from functions like `Network::train` will be 
 src/
   core/        # activation, neuron, synapse primitives
   api/         # network implementation and public API
+  domain/      # aggregates and domain events
+  application/ # commands, queries and handlers
+  infrastructure/
+    event_store.rs  # event store implementations
+    projection/     # read-model projections
 examples/
 tests/
 docs/

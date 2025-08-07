@@ -1,8 +1,8 @@
 //! Handles read-side queries against the current state.
 
+use crate::application::Query;
 use crate::core::{Neuron, Synapse};
-use crate::domain::Network;
-use crate::queries::Query;
+use crate::infrastructure::projection::NetworkProjection;
 use uuid::Uuid;
 
 /// Result returned by the [`QueryHandler`].
@@ -17,27 +17,27 @@ pub enum QueryResult<'a> {
 
 /// Provides read-only access to the network state.
 pub struct QueryHandler<'a> {
-    network: &'a Network,
+    projection: &'a NetworkProjection,
 }
 
 impl<'a> QueryHandler<'a> {
-    /// Creates a new query handler from the given network reference.
-    pub fn new(network: &'a Network) -> Self {
-        Self { network }
+    /// Creates a new query handler from the given projection reference.
+    pub fn new(projection: &'a NetworkProjection) -> Self {
+        Self { projection }
     }
 
     /// Executes a query and returns a projection of the state.
     pub fn handle(&self, query: Query) -> QueryResult<'a> {
         match query {
-            Query::GetNeuron { id } => QueryResult::Neuron(self.network.neurons.get(&id)),
-            Query::ListNeurons => QueryResult::Neurons(self.network.neurons()),
-            Query::ListSynapses => QueryResult::Synapses(self.network.synapses()),
+            Query::GetNeuron { id } => QueryResult::Neuron(self.projection.neuron(id)),
+            Query::ListNeurons => QueryResult::Neurons(self.projection.neurons()),
+            Query::ListSynapses => QueryResult::Synapses(self.projection.synapses()),
         }
     }
 
     /// Convenience method to fetch a neuron directly.
     #[must_use]
     pub fn neuron(&self, id: Uuid) -> Option<&'a Neuron> {
-        self.network.neurons.get(&id)
+        self.projection.neuron(id)
     }
 }

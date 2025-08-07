@@ -3,8 +3,7 @@
 use rand::{seq::SliceRandom, Rng};
 use uuid::Uuid;
 
-use crate::domain::Network;
-use crate::events::{Event, RandomNeuronRemoved};
+use crate::domain::{Event, Network, RandomNeuronRemoved};
 use crate::infrastructure::EventStore;
 
 /// Command requesting the removal of a random neuron.

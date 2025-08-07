@@ -19,7 +19,7 @@ traceability and reproducibility.
 
 Commands modify the system and queries read from it. Command handlers persist
 new events and update the aggregate, while query handlers serve read requests
-from the in-memory projection.
+from in-memory projections housed under `infrastructure/projection`.
 
 ## Extensibility
 

@@ -27,6 +27,9 @@ et ce projet adhère à [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 - Suppression aléatoire de neurone orientée événements via `RemoveRandomNeuronCommand` et
   `RemoveRandomNeuronHandler`.
 ### Modifié
+- Les commandes et requêtes résident désormais dans le module `application`.
+- Les événements de domaine ont été déplacés sous `domain` et exposés via `domain::events`.
+- Les modèles de lecture sont implémentés en tant que projections dans `infrastructure/projection`.
 - La logique de propagation applique désormais les activations après les sommes pondérées et réinitialise toutes les valeurs des neurones entre les exécutions.
 - Rustdoc complet pour les modules et les API publiques.
 - Les identifiants des neurones et des synapses utilisent désormais `Uuid` au lieu d'index numériques.

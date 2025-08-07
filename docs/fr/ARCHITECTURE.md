@@ -19,8 +19,8 @@ réseau, assurant traçabilité et reproductibilité.
 
 Les commandes modifient le système et les requêtes le consultent. Les handlers
 traitent les commandes en persistant de nouveaux événements et en mettant à jour
-l'agrégat, tandis que les query handlers répondent aux lectures à partir de la
-projection en mémoire.
+l'agrégat, tandis que les query handlers répondent aux lectures à partir des
+projections en mémoire situées dans `infrastructure/projection`.
 
 ## Extensibilité
 

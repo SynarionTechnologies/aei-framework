@@ -3,8 +3,7 @@
 use rand::{seq::SliceRandom, Rng};
 use uuid::Uuid;
 
-use crate::domain::Network;
-use crate::events::{Event, RandomSynapseAdded};
+use crate::domain::{Event, Network, RandomSynapseAdded};
 use crate::infrastructure::EventStore;
 
 /// Command requesting the creation of a random synapse.
