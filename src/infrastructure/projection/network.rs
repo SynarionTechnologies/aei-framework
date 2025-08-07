@@ -2,8 +2,7 @@
 
 use uuid::Uuid;
 
-use crate::core::{Neuron, Synapse};
-use crate::domain::{Event, Network};
+use crate::domain::{Event, Network, Neuron, Synapse};
 
 /// In-memory projection of the [`Network`] aggregate.
 #[derive(Debug, Default)]

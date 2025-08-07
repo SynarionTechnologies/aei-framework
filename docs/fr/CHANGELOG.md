@@ -7,6 +7,7 @@ et ce projet adhère à [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Non publié]
 ### Ajouté
+- Exemple orienté événements et tests de commande de synapse.
 - Entraînement par rétropropagation avec `Network::train` et `Network::predict`
 - Dérivées des fonctions d'activation permettant la descente de gradient
 - Exemple XOR, tests et tutoriel README
@@ -33,7 +34,7 @@ et ce projet adhère à [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 - La logique de propagation applique désormais les activations après les sommes pondérées et réinitialise toutes les valeurs des neurones entre les exécutions.
 - Rustdoc complet pour les modules et les API publiques.
 - Les identifiants des neurones et des synapses utilisent désormais `Uuid` au lieu d'index numériques.
-- La structure du projet sépare désormais les primitives `core` et le module réseau `api`.
+- Suppression des modules hérités `api` et `core` ; les primitives sont déplacées dans `domain`.
 - La documentation est disponible en anglais et en français sous `docs/`.
 ### Supprimé
 - Alias de type inutilisés `NodeList` et `TopoOrder` dans l'API réseau.

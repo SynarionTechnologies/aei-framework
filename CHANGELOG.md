@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### Added
+- Event-driven example and synapse command tests.
 - Backpropagation training with `Network::train` and `Network::predict`
 - Activation function derivatives enabling gradient descent
 - XOR example, tests, and README tutorial
@@ -35,7 +36,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   neuron values between runs.
 - Comprehensive rustdoc for modules and public APIs.
 - Neuron and synapse identifiers now use `Uuid` instead of numeric indexes.
-- Project structure now separates `core` primitives and `api` network module.
+- Removed legacy `api` and `core` modules; primitives moved into `domain`.
 - Documentation mirrored in English and French under `docs/`.
 ### Removed
 - Unused `NodeList` and `TopoOrder` type aliases in the network API.

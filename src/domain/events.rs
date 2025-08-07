@@ -3,7 +3,7 @@
 //! Events are persisted in an append-only log and can be replayed to
 //! reconstruct the state of the system.
 
-use crate::core::Activation;
+use super::Activation;
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
