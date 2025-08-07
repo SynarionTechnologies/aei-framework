@@ -1,8 +1,7 @@
 //! Handles write-side commands and persists resulting events.
 
-use crate::commands::Command;
-use crate::domain::Network;
-use crate::events::Event;
+use crate::application::Command;
+use crate::domain::{Event, Network};
 use crate::infrastructure::EventStore;
 
 /// Processes commands, emitting events and updating the in-memory state.

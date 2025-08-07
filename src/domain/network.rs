@@ -5,8 +5,8 @@
 
 use std::collections::HashMap;
 
+use super::events::{Event, RandomNeuronAdded, RandomNeuronRemoved, RandomSynapseAdded};
 use crate::core::{Neuron, Synapse};
-use crate::events::{Event, RandomNeuronAdded, RandomNeuronRemoved, RandomSynapseAdded};
 use uuid::Uuid;
 
 /// Aggregate root containing all neurons and synapses.

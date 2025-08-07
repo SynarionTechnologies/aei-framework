@@ -7,7 +7,7 @@ use std::fs::{File, OpenOptions};
 use std::io::{self, BufRead, BufReader, Write};
 use std::path::PathBuf;
 
-use crate::events::Event;
+use crate::domain::Event;
 
 /// Storage backend for domain events.
 pub trait EventStore {

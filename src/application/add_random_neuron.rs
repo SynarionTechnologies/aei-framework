@@ -4,8 +4,7 @@ use rand::{seq::SliceRandom, Rng};
 use uuid::Uuid;
 
 use crate::core::Activation;
-use crate::domain::Network;
-use crate::events::{Event, RandomNeuronAdded};
+use crate::domain::{Event, Network, RandomNeuronAdded};
 use crate::infrastructure::EventStore;
 
 /// Command requesting the addition of a randomly configured neuron.
