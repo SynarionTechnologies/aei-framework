@@ -1,6 +1,6 @@
 //! Representation of neurons within a [`Network`].
 
-use crate::Activation;
+use super::Activation;
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 

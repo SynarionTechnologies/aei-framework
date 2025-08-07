@@ -1,8 +1,8 @@
 use aei_framework::{
     application::{Query, QueryHandler, QueryResult},
-    core::Activation,
     domain::{Event, RandomNeuronAdded},
     infrastructure::projection::NetworkProjection,
+    Activation,
 };
 use uuid::Uuid;
 

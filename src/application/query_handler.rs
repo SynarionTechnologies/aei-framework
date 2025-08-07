@@ -1,7 +1,7 @@
 //! Handles read-side queries against the current state.
 
 use crate::application::Query;
-use crate::core::{Neuron, Synapse};
+use crate::domain::{Neuron, Synapse};
 use crate::infrastructure::projection::NetworkProjection;
 use uuid::Uuid;
 

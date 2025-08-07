@@ -3,7 +3,7 @@
 use rand::{seq::SliceRandom, Rng};
 use uuid::Uuid;
 
-use crate::core::Activation;
+use crate::domain::Activation;
 use crate::domain::{Event, Network, RandomNeuronAdded};
 use crate::infrastructure::EventStore;
 

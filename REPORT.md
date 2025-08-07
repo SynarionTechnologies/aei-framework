@@ -1,13 +1,12 @@
 # Refactor Report
 
 ## Removed / Refactored
-- Moved `activation.rs`, `neuron.rs`, and `synapse.rs` into `src/core`.
-- Moved `network.rs` into `src/api`.
-- Updated imports and tests to match the new module layout.
+- Removed legacy `src/api` module.
+- Moved `activation.rs`, `neuron.rs`, and `synapse.rs` into `src/domain`.
+- Updated imports, documentation, and tests to match the new layout.
 
 ## Architecture Choices
-- `core` contains primitive types (`Activation`, `Neuron`, `Synapse`).
-- `api` exposes the `Network` type and future public interfaces.
+- `domain` now contains primitive types (`Activation`, `Neuron`, `Synapse`).
 - Documentation is mirrored in English and French under `docs/en` and `docs/fr`.
 
 ## TODO / Future Work
