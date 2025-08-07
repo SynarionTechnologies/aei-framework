@@ -124,6 +124,7 @@ AEIF suit le Domain-Driven Design avec Event Sourcing et CQRS. Les opérations m
 ## Documentation
 
 Les guides en anglais et en français sont disponibles dans [docs/en](docs/en/README.md) et [docs/fr](docs/fr/README.md).
+Un glossaire des termes métiers et techniques est disponible dans [GLOSSARY.md](GLOSSARY.md).
 
 ## Développement
 

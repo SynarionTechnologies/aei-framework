@@ -122,6 +122,7 @@ docs/
 ## Documentation
 
 English and French guides are available under [docs/en](docs/en/README.md) and [docs/fr](docs/fr/README.md).
+A glossary of domain-specific and technical terms is provided in [GLOSSARY.md](../../GLOSSARY.md).
 
 ## Development
 
