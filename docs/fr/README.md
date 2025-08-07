@@ -63,6 +63,24 @@ let synapse_id = handler.handle(AddRandomSynapseCommand).unwrap();
 println!("Synapse créée : {synapse_id}");
 ```
 
+## Suppression aléatoire de synapse
+
+Supprimez une synapse sélectionnée aléatoirement via un gestionnaire orienté événements :
+
+```rust
+use aei_framework::{
+    RemoveRandomSynapseCommand, RemoveRandomSynapseHandler, FileEventStore,
+};
+use rand::thread_rng;
+use std::path::PathBuf;
+
+let store = FileEventStore::new(PathBuf::from("events.log"));
+let mut handler = RemoveRandomSynapseHandler::new(store, thread_rng()).unwrap();
+if let Ok(removed_id) = handler.handle(RemoveRandomSynapseCommand) {
+    println!("Synapse supprimée : {removed_id}");
+}
+```
+
 ## Journalisation
 
 Le framework émet des messages d'information via la crate [`log`](https://docs.rs/log). Pour afficher ces journaux, initialisez une implémentation de logger comme [`env_logger`](https://docs.rs/env_logger) dans votre application :

@@ -65,6 +65,24 @@ let synapse_id = handler.handle(AddRandomSynapseCommand).unwrap();
 println!("Created synapse: {synapse_id}");
 ```
 
+## Random Synapse Removal
+
+Remove a random synapse through an event-driven handler:
+
+```rust
+use aei_framework::{
+    RemoveRandomSynapseCommand, RemoveRandomSynapseHandler, FileEventStore,
+};
+use rand::thread_rng;
+use std::path::PathBuf;
+
+let store = FileEventStore::new(PathBuf::from("events.log"));
+let mut handler = RemoveRandomSynapseHandler::new(store, thread_rng()).unwrap();
+if let Ok(removed_id) = handler.handle(RemoveRandomSynapseCommand) {
+    println!("Removed synapse: {removed_id}");
+}
+```
+
 ## Logging
 
 The framework emits informational messages using the [`log`](https://docs.rs/log) crate. To see these logs, initialize a logger implementation such as [`env_logger`](https://docs.rs/env_logger) in your application:

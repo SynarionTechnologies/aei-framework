@@ -52,3 +52,6 @@ Commande qui supprime un neurone choisi aléatoirement du réseau. Implémentée
 
 ### AddRandomSynapseCommand
 Commande qui crée une synapse entre deux neurones choisis aléatoirement. Implémentée dans [src/application/add_random_synapse.rs](../../src/application/add_random_synapse.rs).
+
+## RemoveRandomSynapseCommand
+Commande demandant la suppression d'une synapse aléatoire du réseau. Implémentée dans [src/application/add_random_synapse.rs](../../src/application/remove_random_synapse.rs).

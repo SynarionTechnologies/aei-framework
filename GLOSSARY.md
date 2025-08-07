@@ -52,3 +52,6 @@ Command that removes a randomly selected neuron from the network. Implemented in
 
 ### AddRandomSynapseCommand
 Command that creates a synapse between two randomly chosen neurons. Implemented in [src/application/add_random_synapse.rs](src/application/add_random_synapse.rs).
+
+### RemoveRandomSynapseCommand
+Command requesting the removal of a random synapse from the network. Implemented in [src/application/add_random_synapse.rs](src/application/remove_random_synapse.rs).

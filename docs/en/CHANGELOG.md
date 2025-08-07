@@ -28,6 +28,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `AddRandomNeuronHandler`.
 - Event-sourced random neuron removal via `RemoveRandomNeuronCommand` and
   `RemoveRandomNeuronHandler`.
+- Event-sourced random synapse removal via `RemoveRandomSynapseCommand` and
+  `RemoveRandomSynapseHandler`.
 ### Changed
 - Commands and queries now reside in the `application` module.
 - Domain events moved under `domain` and exposed via `domain::events`.
