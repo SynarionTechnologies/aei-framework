@@ -7,7 +7,9 @@ mod neuron;
 mod synapse;
 
 pub use activation::Activation;
-pub use events::{Event, RandomNeuronAdded, RandomNeuronRemoved, RandomSynapseAdded};
+pub use events::{
+    Event, RandomNeuronAdded, RandomNeuronRemoved, RandomSynapseAdded, RandomSynapseRemoved,
+};
 pub use network::Network;
 pub use neuron::Neuron;
 pub use synapse::Synapse;

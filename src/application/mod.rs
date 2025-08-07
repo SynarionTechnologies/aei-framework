@@ -7,6 +7,7 @@ mod commands;
 mod queries;
 mod query_handler;
 mod remove_random_neuron;
+mod remove_random_synapse;
 
 pub use add_random_neuron::{AddRandomNeuronCommand, AddRandomNeuronError, AddRandomNeuronHandler};
 pub use add_random_synapse::{
@@ -18,4 +19,7 @@ pub use queries::Query;
 pub use query_handler::{QueryHandler, QueryResult};
 pub use remove_random_neuron::{
     RemoveRandomNeuronCommand, RemoveRandomNeuronError, RemoveRandomNeuronHandler,
+};
+pub use remove_random_synapse::{
+    RemoveRandomSynapseCommand, RemoveRandomSynapseError, RemoveRandomSynapseHandler,
 };
