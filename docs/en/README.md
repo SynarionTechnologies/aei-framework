@@ -75,6 +75,16 @@ env_logger::init();
 
 With a logger configured, progress from command handlers will be reported at the `info` level.
 
+## Example
+
+A minimal command workflow is available in [examples/basic.rs](../../examples/basic.rs):
+
+```bash
+ cargo run --example basic
+```
+
+It adds neurons, connects them with a synapse, and queries the read model.
+
 ## Project Structure
 
 ```

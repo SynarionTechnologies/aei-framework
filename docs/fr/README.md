@@ -73,6 +73,16 @@ env_logger::init();
 
 Avec un logger configuré, la progression des gestionnaires de commandes sera rapportée au niveau `info`.
 
+## Exemple
+
+Un flux de commandes minimal est disponible dans [examples/basic.rs](../../examples/basic.rs) :
+
+```bash
+ cargo run --example basic
+```
+
+Il ajoute des neurones, les relie par une synapse et interroge le modèle de lecture.
+
 ## Structure du projet
 
 ```
