@@ -5,7 +5,7 @@
 //! extending this enum.
 use serde::{Deserialize, Serialize};
 
-#[derive(Debug, Clone, Copy, Default, Serialize, Deserialize)]
+#[derive(Debug, Clone, Copy, Default, Serialize, Deserialize, PartialEq, Eq)]
 pub enum Activation {
     /// Returns the input unchanged.
     #[default]

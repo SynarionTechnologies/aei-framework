@@ -45,4 +45,9 @@ impl NetworkProjection {
     pub fn synapse(&self, id: Uuid) -> Option<&Synapse> {
         self.network.synapses.get(&id)
     }
+
+    /// Fetches the activation function of a neuron by its identifier.
+    pub fn activation(&self, id: Uuid) -> Option<crate::domain::Activation> {
+        self.network.neurons.get(&id).map(|n| n.activation)
+    }
 }

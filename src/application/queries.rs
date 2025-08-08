@@ -13,4 +13,6 @@ pub enum Query {
     ListSynapses,
     /// Fetch a synapse by identifier.
     GetSynapse { id: Uuid },
+    /// Fetch the activation function of a neuron by identifier.
+    GetNeuronActivation { id: Uuid },
 }

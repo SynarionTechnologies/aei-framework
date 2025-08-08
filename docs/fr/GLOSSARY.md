@@ -61,3 +61,6 @@ Commande qui applique un bruit gaussien au poids d'une synapse choisie aléatoir
 
 ### SynapseWeightMutated
 Événement de domaine enregistrant la modification du poids d'une synapse. Émis par `MutateRandomSynapseWeightHandler`.
+
+### Activation
+Fonction non linéaire appliquée à l'entrée d'un neurone pour produire sa sortie.

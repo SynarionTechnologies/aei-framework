@@ -46,6 +46,26 @@ if let Ok(removed_id) = handler.handle(RemoveRandomNeuronCommand) {
 }
 ```
 
+## Mutation aléatoire de l’activation d’un neurone
+
+Muter la fonction d’activation d’un neurone choisi aléatoirement :
+
+```rust
+use aei_framework::{
+    MutateRandomNeuronActivationCommand, MutateRandomNeuronActivationHandler,
+    FileEventStore,
+};
+use rand::thread_rng;
+use std::path::PathBuf;
+
+let store = FileEventStore::new(PathBuf::from("events.log"));
+let mut handler =
+    MutateRandomNeuronActivationHandler::new(store, thread_rng()).unwrap();
+if let Ok(neuron_id) = handler.handle(MutateRandomNeuronActivationCommand { exclude_io: false }) {
+    println!("Activation mutée : {neuron_id}");
+}
+```
+
 ## Ajout aléatoire de synapse
 
 Créez une synapse entre deux neurones choisis aléatoirement en utilisant le gestionnaire orienté événements :

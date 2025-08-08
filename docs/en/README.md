@@ -47,6 +47,26 @@ if let Ok(removed_id) = handler.handle(RemoveRandomNeuronCommand) {
 }
 ```
 
+## Random Neuron Activation Mutation
+
+Mutate the activation function of a randomly selected neuron:
+
+```rust
+use aei_framework::{
+    MutateRandomNeuronActivationCommand, MutateRandomNeuronActivationHandler,
+    FileEventStore,
+};
+use rand::thread_rng;
+use std::path::PathBuf;
+
+let store = FileEventStore::new(PathBuf::from("events.log"));
+let mut handler =
+    MutateRandomNeuronActivationHandler::new(store, thread_rng()).unwrap();
+if let Ok(mutated_id) = handler.handle(MutateRandomNeuronActivationCommand { exclude_io: false }) {
+    println!("Mutated neuron: {mutated_id}");
+}
+```
+
 ## Random Synapse Addition
 
 Create a synapse between two randomly chosen neurons using the event-sourced

@@ -38,6 +38,9 @@ State optimized for serving queries, maintained by projections derived from the 
 ### Aggregate
 A domain object that enforces invariants and rebuilds its state by applying events, such as [Network](src/domain/network.rs).
 
+### Activation
+The non-linear function a neuron applies to its input to produce an output.
+
 ### Neuron
 Basic processing unit in the network. Defined in [src/domain/neuron.rs](src/domain/neuron.rs).
 
