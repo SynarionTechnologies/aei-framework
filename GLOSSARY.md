@@ -38,6 +38,9 @@ State optimized for serving queries, maintained by projections derived from the 
 ### Aggregate
 A domain object that enforces invariants and rebuilds its state by applying events, such as [Network](src/domain/network.rs).
 
+### Adaptive Memory
+Bounded buffer storing scored experiences. Managed through event sourcing and queried via projections. See [src/domain/memory](src/domain/memory).
+
 ### Activation
 The non-linear function a neuron applies to its input to produce an output.
 

@@ -38,6 +38,9 @@ Processus transformant les événements en un modèle de lecture adapté aux req
 ### Agrégat
 Objet de domaine qui applique des invariants et reconstruit son état en appliquant des événements, comme [Network](../../src/domain/network.rs).
 
+### Mémoire adaptative
+Tampon borné stockant des expériences scorées. Géré via l'event sourcing et interrogé par des projections. Voir [src/domain/memory](../../src/domain/memory).
+
 ### Neurone
 Unité de traitement de base du réseau. Définie dans [src/domain/neuron.rs](../../src/domain/neuron.rs).
 

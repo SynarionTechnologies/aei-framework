@@ -121,6 +121,36 @@ if let Ok(synapse_id) =
 }
 ```
 
+## Mémoire adaptative
+
+Enregistrez et interrogez des expériences passées dans un tampon borné et scoré :
+
+```rust
+use aei_framework::{
+    application::memory::{
+        AddMemoryEntryCommand, AddMemoryEntryHandler, MemoryQuery, MemoryQueryHandler,
+    },
+    infrastructure::{projection::MemoryProjection, FileMemoryEventStore},
+};
+use serde_json::json;
+use std::path::PathBuf;
+
+let store = FileMemoryEventStore::new(PathBuf::from("memory.log"));
+let mut handler = AddMemoryEntryHandler::new(store, 50).unwrap();
+handler
+    .handle(AddMemoryEntryCommand {
+        event_type: "interaction".into(),
+        payload: json!({"msg": "bonjour"}),
+        score: 0.7,
+    })
+    .unwrap();
+let mut store = handler.store;
+let events = store.load().unwrap();
+let projection = MemoryProjection::from_events(50, &events);
+let qh = MemoryQueryHandler::new(&projection);
+let _entries = qh.handle(MemoryQuery::GetMemoryState);
+```
+
 ## Journalisation
 
 Le framework émet des messages d'information via la crate [`log`](https://docs.rs/log). Pour afficher ces journaux, initialisez une implémentation de logger comme [`env_logger`](https://docs.rs/env_logger) dans votre application :

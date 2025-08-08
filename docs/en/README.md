@@ -123,6 +123,36 @@ if let Ok(synapse_id) =
 }
 ```
 
+## Adaptive Memory
+
+Record and query past experiences through a bounded, scored buffer:
+
+```rust
+use aei_framework::{
+    application::memory::{
+        AddMemoryEntryCommand, AddMemoryEntryHandler, MemoryQuery, MemoryQueryHandler,
+    },
+    infrastructure::{projection::MemoryProjection, FileMemoryEventStore},
+};
+use serde_json::json;
+use std::path::PathBuf;
+
+let store = FileMemoryEventStore::new(PathBuf::from("memory.log"));
+let mut handler = AddMemoryEntryHandler::new(store, 50).unwrap();
+handler
+    .handle(AddMemoryEntryCommand {
+        event_type: "interaction".into(),
+        payload: json!({"msg": "hello"}),
+        score: 0.7,
+    })
+    .unwrap();
+let mut store = handler.store;
+let events = store.load().unwrap();
+let projection = MemoryProjection::from_events(50, &events);
+let qh = MemoryQueryHandler::new(&projection);
+let _entries = qh.handle(MemoryQuery::GetMemoryState);
+```
+
 ## Logging
 
 The framework emits informational messages using the [`log`](https://docs.rs/log) crate. To see these logs, initialize a logger implementation such as [`env_logger`](https://docs.rs/env_logger) in your application:

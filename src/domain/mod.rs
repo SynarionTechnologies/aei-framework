@@ -2,6 +2,7 @@
 
 mod activation;
 mod events;
+mod memory;
 mod network;
 mod neuron;
 mod synapse;
@@ -10,6 +11,10 @@ pub use activation::Activation;
 pub use events::{
     Event, NeuronActivationMutated, RandomNeuronAdded, RandomNeuronRemoved, RandomSynapseAdded,
     RandomSynapseRemoved, SynapseWeightMutated,
+};
+pub use memory::{
+    AdaptiveMemory, MemoryEntry, MemoryEntryAdded, MemoryEntryRemoved, MemoryEvent, MemoryPruned,
+    MemoryScoreUpdated,
 };
 pub use network::Network;
 pub use neuron::Neuron;
