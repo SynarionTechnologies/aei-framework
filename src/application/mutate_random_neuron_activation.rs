@@ -7,7 +7,7 @@
 use rand::{seq::SliceRandom, Rng};
 use uuid::Uuid;
 
-use crate::domain::{Activation, Event, NeuronActivationMutated, Network};
+use crate::domain::{Activation, Event, Network, NeuronActivationMutated};
 use crate::infrastructure::EventStore;
 
 /// Command requesting mutation of a random neuron's activation.
@@ -41,7 +41,11 @@ impl<S: EventStore, R: Rng> MutateRandomNeuronActivationHandler<S, R> {
     pub fn new(mut store: S, rng: R) -> Result<Self, S::Error> {
         let events = store.load()?;
         let network = Network::hydrate(&events);
-        Ok(Self { store, network, rng })
+        Ok(Self {
+            store,
+            network,
+            rng,
+        })
     }
 
     /// Handles the command and returns the identifier of the mutated neuron.
@@ -74,16 +78,8 @@ impl<S: EventStore, R: Rng> MutateRandomNeuronActivationHandler<S, R> {
         let mut candidates: Vec<Uuid> = self.network.neurons.keys().copied().collect();
         if cmd.exclude_io {
             candidates.retain(|id| {
-                let has_in = self
-                    .network
-                    .synapses
-                    .values()
-                    .any(|s| s.to == *id);
-                let has_out = self
-                    .network
-                    .synapses
-                    .values()
-                    .any(|s| s.from == *id);
+                let has_in = self.network.synapses.values().any(|s| s.to == *id);
+                let has_out = self.network.synapses.values().any(|s| s.from == *id);
                 has_in && has_out
             });
         }
@@ -120,4 +116,3 @@ impl<S: EventStore, R: Rng> MutateRandomNeuronActivationHandler<S, R> {
         Ok(neuron_id)
     }
 }
-

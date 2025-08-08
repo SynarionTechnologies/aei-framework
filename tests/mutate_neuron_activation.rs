@@ -19,7 +19,10 @@ fn temp_path() -> PathBuf {
 }
 
 fn seed_neuron(store: &mut FileEventStore, id: Uuid, activation: Activation) {
-    let event = Event::RandomNeuronAdded(RandomNeuronAdded { neuron_id: id, activation });
+    let event = Event::RandomNeuronAdded(RandomNeuronAdded {
+        neuron_id: id,
+        activation,
+    });
     store.append(&event).unwrap();
 }
 
@@ -40,7 +43,11 @@ fn mutate_neuron_activation_appends_event() {
     let mut store = handler.store;
     let events = store.load().unwrap();
     match events.last().unwrap() {
-        Event::NeuronActivationMutated(NeuronActivationMutated { neuron_id: id, old_activation, new_activation }) => {
+        Event::NeuronActivationMutated(NeuronActivationMutated {
+            neuron_id: id,
+            old_activation,
+            new_activation,
+        }) => {
             assert_eq!(*id, neuron_id);
             assert_eq!(*old_activation, Activation::Identity);
             assert_ne!(*old_activation, *new_activation);
@@ -56,7 +63,10 @@ fn mutate_neuron_activation_appends_event() {
     let handler = QueryHandler::new(&projection);
     match handler.handle(Query::GetNeuronActivation { id: neuron_id }) {
         QueryResult::Activation(Some(a)) => {
-            if let Event::NeuronActivationMutated(NeuronActivationMutated { new_activation, .. }) = events.last().unwrap() {
+            if let Event::NeuronActivationMutated(NeuronActivationMutated {
+                new_activation, ..
+            }) = events.last().unwrap()
+            {
                 assert_eq!(*new_activation, a);
             }
         }
@@ -74,7 +84,10 @@ fn mutate_neuron_activation_errors_when_no_eligible() {
     let rng = ChaCha8Rng::seed_from_u64(2);
     let mut handler = MutateRandomNeuronActivationHandler::new(store, rng).unwrap();
     let res = handler.handle(MutateRandomNeuronActivationCommand { exclude_io: true });
-    assert!(matches!(res, Err(MutateNeuronActivationError::NoEligibleNeuron)));
+    assert!(matches!(
+        res,
+        Err(MutateNeuronActivationError::NoEligibleNeuron)
+    ));
 }
 
 #[test]
@@ -94,10 +107,15 @@ fn mutate_neuron_activation_event_replay() {
     let events = replay_store.load().unwrap();
     let net = aei_framework::DomainNetwork::hydrate(&events);
     let last_activation = match events.last().unwrap() {
-        Event::NeuronActivationMutated(NeuronActivationMutated { new_activation, .. }) => *new_activation,
+        Event::NeuronActivationMutated(NeuronActivationMutated { new_activation, .. }) => {
+            *new_activation
+        }
         e => panic!("unexpected event {e:?}"),
     };
-    assert_eq!(net.neurons.get(&neuron_id).unwrap().activation, last_activation);
+    assert_eq!(
+        net.neurons.get(&neuron_id).unwrap().activation,
+        last_activation
+    );
 
     let projection = NetworkProjection::from_events(&events);
     let handler = QueryHandler::new(&projection);
