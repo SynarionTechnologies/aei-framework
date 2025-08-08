@@ -1,10 +1,9 @@
 use std::path::PathBuf;
 
 use aei_framework::{
-    Activation, CuriosityScope, Event, FileEventStore, RecalculateCuriosityScoreCommand,
-    RecalculateCuriosityScoreHandler, CuriosityScoreUpdated, EventStore,
-    RandomNeuronAdded, DomainNetwork,
-    infrastructure::projection::CuriosityScoreProjection,
+    infrastructure::projection::CuriosityScoreProjection, Activation, CuriosityScope,
+    CuriosityScoreUpdated, DomainNetwork, Event, EventStore, FileEventStore, RandomNeuronAdded,
+    RecalculateCuriosityScoreCommand, RecalculateCuriosityScoreHandler,
 };
 use uuid::Uuid;
 

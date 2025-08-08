@@ -25,7 +25,12 @@ impl CuriosityScoreProjection {
 
     /// Applies a new event to update a score.
     pub fn apply(&mut self, event: &Event) {
-        if let Event::CuriosityScoreUpdated(CuriosityScoreUpdated { target_id, new_score, .. }) = event {
+        if let Event::CuriosityScoreUpdated(CuriosityScoreUpdated {
+            target_id,
+            new_score,
+            ..
+        }) = event
+        {
             self.scores.insert(*target_id, *new_score);
         }
     }

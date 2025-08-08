@@ -96,13 +96,11 @@ impl<S: EventStore> RecalculateCuriosityScoreHandler<S> {
         match event {
             Event::RandomNeuronAdded(e) => e.neuron_id == id,
             Event::RandomNeuronRemoved(e) => e.neuron_id == id,
-            Event::SynapseCreated { id: sid, from, to, .. } => {
-                *sid == id || *from == id || *to == id
-            }
+            Event::SynapseCreated {
+                id: sid, from, to, ..
+            } => *sid == id || *from == id || *to == id,
             Event::SynapseRemoved { id: sid } => *sid == id,
-            Event::RandomSynapseAdded(e) => {
-                e.synapse_id == id || e.from == id || e.to == id
-            }
+            Event::RandomSynapseAdded(e) => e.synapse_id == id || e.from == id || e.to == id,
             Event::RandomSynapseRemoved(e) => e.synapse_id == id,
             Event::SynapseWeightMutated(e) => e.synapse_id == id,
             Event::NeuronActivationMutated(e) => e.neuron_id == id,
