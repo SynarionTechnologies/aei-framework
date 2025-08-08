@@ -67,3 +67,6 @@ Command that mutates the weight of a randomly selected synapse by adding Gaussia
 
 ### SynapseWeightMutated
 Domain event recording a change in a synapse's weight. Emitted by `MutateRandomSynapseWeightHandler`.
+
+### Curiosity Score
+Metric representing the exploratory potential of a neuron or synapse. Recomputed via `RecalculateCuriosityScoreCommand` and stored through `CuriosityScoreUpdated` events.

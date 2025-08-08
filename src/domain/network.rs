@@ -6,8 +6,8 @@
 use std::collections::HashMap;
 
 use super::events::{
-    Event, NeuronActivationMutated, RandomNeuronAdded, RandomNeuronRemoved, RandomSynapseAdded,
-    RandomSynapseRemoved, SynapseWeightMutated,
+    CuriosityScoreUpdated, Event, NeuronActivationMutated, RandomNeuronAdded, RandomNeuronRemoved,
+    RandomSynapseAdded, RandomSynapseRemoved, SynapseWeightMutated,
 };
 use super::{Neuron, Synapse};
 use uuid::Uuid;
@@ -67,6 +67,9 @@ impl Network {
             Event::NeuronActivationMutated(e) => {
                 self.apply_neuron_activation_mutated(e);
             }
+            Event::CuriosityScoreUpdated(e) => {
+                self.apply_curiosity_score_updated(e);
+            }
         }
     }
 
@@ -118,6 +121,15 @@ impl Network {
     fn apply_neuron_activation_mutated(&mut self, event: &NeuronActivationMutated) {
         if let Some(neuron) = self.neurons.get_mut(&event.neuron_id) {
             neuron.activation = event.new_activation;
+        }
+    }
+
+    /// Applies a [`CuriosityScoreUpdated`] event to the network state.
+    fn apply_curiosity_score_updated(&mut self, event: &CuriosityScoreUpdated) {
+        if let Some(neuron) = self.neurons.get_mut(&event.target_id) {
+            neuron.curiosity_score = event.new_score;
+        } else if let Some(synapse) = self.synapses.get_mut(&event.target_id) {
+            synapse.curiosity_score = event.new_score;
         }
     }
 

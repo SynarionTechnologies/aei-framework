@@ -13,17 +13,18 @@ pub use application::memory::{
 };
 pub use application::{
     AddRandomNeuronCommand, AddRandomNeuronError, AddRandomNeuronHandler, AddRandomSynapseCommand,
-    AddRandomSynapseError, AddRandomSynapseHandler, Command, CommandHandler,
+    AddRandomSynapseError, AddRandomSynapseHandler, Command, CommandHandler, CuriosityScope,
     MutateNeuronActivationError, MutateRandomNeuronActivationCommand,
     MutateRandomNeuronActivationHandler, MutateRandomSynapseWeightCommand,
     MutateRandomSynapseWeightError, MutateRandomSynapseWeightHandler, Query, QueryHandler,
-    QueryResult, RemoveRandomNeuronCommand, RemoveRandomNeuronError, RemoveRandomNeuronHandler,
+    QueryResult, RecalculateCuriosityScoreCommand, RecalculateCuriosityScoreHandler,
+    RemoveRandomNeuronCommand, RemoveRandomNeuronError, RemoveRandomNeuronHandler,
     RemoveRandomSynapseCommand, RemoveRandomSynapseError, RemoveRandomSynapseHandler,
 };
 pub use domain::{
-    Activation, AdaptiveMemory, Event, MemoryEntry, MemoryEntryAdded, MemoryEntryRemoved,
-    MemoryEvent, MemoryPruned, MemoryScoreUpdated, Network as DomainNetwork, Neuron,
-    NeuronActivationMutated, RandomNeuronAdded, RandomNeuronRemoved, RandomSynapseAdded,
+    Activation, AdaptiveMemory, CuriosityScoreUpdated, Event, MemoryEntry, MemoryEntryAdded,
+    MemoryEntryRemoved, MemoryEvent, MemoryPruned, MemoryScoreUpdated, Network as DomainNetwork,
+    Neuron, NeuronActivationMutated, RandomNeuronAdded, RandomNeuronRemoved, RandomSynapseAdded,
     RandomSynapseRemoved, Synapse, SynapseWeightMutated,
 };
 pub use infrastructure::{EventStore, FileEventStore, FileMemoryEventStore, MemoryEventStore};

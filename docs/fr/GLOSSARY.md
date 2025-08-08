@@ -67,3 +67,6 @@ Commande qui applique un bruit gaussien au poids d'une synapse choisie aléatoir
 
 ### Activation
 Fonction non linéaire appliquée à l'entrée d'un neurone pour produire sa sortie.
+
+### Score de curiosité
+Métrique représentant le potentiel exploratoire d'un neurone ou d'une synapse. Recalculé via `RecalculateCuriosityScoreCommand` et persisté par des événements `CuriosityScoreUpdated`.

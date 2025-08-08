@@ -16,6 +16,8 @@ pub struct Neuron {
     pub value: f64,
     /// Activation function used by this neuron.
     pub activation: Activation,
+    /// Current curiosity score guiding exploration.
+    pub curiosity_score: f64,
 }
 
 impl Neuron {
@@ -26,6 +28,7 @@ impl Neuron {
             id: Uuid::new_v4(),
             value: 0.0,
             activation,
+            curiosity_score: 0.0,
         }
     }
 
@@ -35,6 +38,12 @@ impl Neuron {
             id,
             value: 0.0,
             activation,
+            curiosity_score: 0.0,
         }
+    }
+
+    /// Updates the curiosity score of the neuron.
+    pub fn update_curiosity_score(&mut self, score: f64) {
+        self.curiosity_score = score;
     }
 }

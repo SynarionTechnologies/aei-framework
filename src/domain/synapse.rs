@@ -16,6 +16,8 @@ pub struct Synapse {
     pub to: Uuid,
     /// Weight applied during propagation.
     pub weight: f64,
+    /// Curiosity score evaluating exploratory potential.
+    pub curiosity_score: f64,
 }
 
 impl Synapse {
@@ -26,6 +28,7 @@ impl Synapse {
             from,
             to,
             weight,
+            curiosity_score: 0.0,
         }
     }
 
@@ -36,6 +39,12 @@ impl Synapse {
             from,
             to,
             weight,
+            curiosity_score: 0.0,
         }
+    }
+
+    /// Updates the curiosity score of the synapse.
+    pub fn update_curiosity_score(&mut self, score: f64) {
+        self.curiosity_score = score;
     }
 }

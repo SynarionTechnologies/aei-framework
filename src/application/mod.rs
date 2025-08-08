@@ -9,6 +9,7 @@ mod mutate_random_neuron_activation;
 mod mutate_random_synapse_weight;
 mod queries;
 mod query_handler;
+mod recalculate_curiosity_score;
 mod remove_random_neuron;
 mod remove_random_synapse;
 
@@ -28,6 +29,9 @@ pub use mutate_random_synapse_weight::{
 };
 pub use queries::Query;
 pub use query_handler::{QueryHandler, QueryResult};
+pub use recalculate_curiosity_score::{
+    CuriosityScope, RecalculateCuriosityScoreCommand, RecalculateCuriosityScoreHandler,
+};
 pub use remove_random_neuron::{
     RemoveRandomNeuronCommand, RemoveRandomNeuronError, RemoveRandomNeuronHandler,
 };
