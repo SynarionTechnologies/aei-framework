@@ -113,7 +113,7 @@ impl AdaptiveMemory {
 
     fn apply_pruned(&mut self, event: &MemoryPruned) {
         self.entries
-            .retain(|e| !event.removed_entries.iter().any(|id| *id == e.id));
+            .retain(|e| !event.removed_entries.contains(&e.id));
     }
 
     fn apply_score_updated(&mut self, event: &MemoryScoreUpdated) {
