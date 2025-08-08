@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### Added
+- Random neuron activation mutation through `MutateRandomNeuronActivationCommand` and `MutateRandomNeuronActivationHandler`.
 - Random synapse weight mutation through `MutateRandomSynapseWeightCommand` and `MutateRandomSynapseWeightHandler`.
 - Event-driven example and synapse command tests.
 - Backpropagation training with `Network::train` and `Network::predict`

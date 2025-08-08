@@ -8,8 +8,8 @@ mod synapse;
 
 pub use activation::Activation;
 pub use events::{
-    Event, RandomNeuronAdded, RandomNeuronRemoved, RandomSynapseAdded, RandomSynapseRemoved,
-    SynapseWeightMutated,
+    Event, NeuronActivationMutated, RandomNeuronAdded, RandomNeuronRemoved, RandomSynapseAdded,
+    RandomSynapseRemoved, SynapseWeightMutated,
 };
 pub use network::Network;
 pub use neuron::Neuron;

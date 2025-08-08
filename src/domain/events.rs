@@ -29,6 +29,8 @@ pub enum Event {
     RandomSynapseRemoved(RandomSynapseRemoved),
     /// The weight of an existing synapse was mutated.
     SynapseWeightMutated(SynapseWeightMutated),
+    /// The activation function of a neuron was mutated.
+    NeuronActivationMutated(NeuronActivationMutated),
 }
 
 /// Event emitted when a random neuron is added to the network.
@@ -76,4 +78,15 @@ pub struct SynapseWeightMutated {
     pub old_weight: f64,
     /// Newly assigned weight after mutation.
     pub new_weight: f64,
+}
+
+/// Event emitted when the activation of a neuron changes due to mutation.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct NeuronActivationMutated {
+    /// Identifier of the mutated neuron.
+    pub neuron_id: Uuid,
+    /// Activation function prior to mutation.
+    pub old_activation: Activation,
+    /// Newly assigned activation function.
+    pub new_activation: Activation,
 }
