@@ -7,6 +7,7 @@ mod commands;
 pub mod memory;
 mod mutate_random_neuron_activation;
 mod mutate_random_synapse_weight;
+mod recalculate_curiosity_score;
 mod queries;
 mod query_handler;
 mod remove_random_neuron;
@@ -25,6 +26,9 @@ pub use mutate_random_neuron_activation::{
 pub use mutate_random_synapse_weight::{
     MutateRandomSynapseWeightCommand, MutateRandomSynapseWeightError,
     MutateRandomSynapseWeightHandler,
+};
+pub use recalculate_curiosity_score::{
+    CuriosityScope, RecalculateCuriosityScoreCommand, RecalculateCuriosityScoreHandler,
 };
 pub use queries::Query;
 pub use query_handler::{QueryHandler, QueryResult};

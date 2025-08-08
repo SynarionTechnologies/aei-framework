@@ -153,6 +153,27 @@ let qh = MemoryQueryHandler::new(&projection);
 let _entries = qh.handle(MemoryQuery::GetMemoryState);
 ```
 
+## Curiosity Score
+
+Evaluate exploratory potential of network components:
+
+```rust
+use aei_framework::{
+    CuriosityScope, RecalculateCuriosityScoreCommand, RecalculateCuriosityScoreHandler,
+    FileEventStore,
+};
+use std::path::PathBuf;
+
+let store = FileEventStore::new(PathBuf::from("events.log"));
+let mut handler = RecalculateCuriosityScoreHandler::new(store).unwrap();
+handler
+    .handle(RecalculateCuriosityScoreCommand {
+        target_ids: vec![],
+        scope: CuriosityScope::All,
+    })
+    .unwrap();
+```
+
 ## Logging
 
 The framework emits informational messages using the [`log`](https://docs.rs/log) crate. To see these logs, initialize a logger implementation such as [`env_logger`](https://docs.rs/env_logger) in your application:

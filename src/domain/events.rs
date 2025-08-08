@@ -31,6 +31,8 @@ pub enum Event {
     SynapseWeightMutated(SynapseWeightMutated),
     /// The activation function of a neuron was mutated.
     NeuronActivationMutated(NeuronActivationMutated),
+    /// The curiosity score of a neuron or synapse was updated.
+    CuriosityScoreUpdated(CuriosityScoreUpdated),
 }
 
 /// Event emitted when a random neuron is added to the network.
@@ -89,4 +91,15 @@ pub struct NeuronActivationMutated {
     pub old_activation: Activation,
     /// Newly assigned activation function.
     pub new_activation: Activation,
+}
+
+/// Event emitted when a curiosity score changes.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct CuriosityScoreUpdated {
+    /// Identifier of the neuron or synapse.
+    pub target_id: Uuid,
+    /// Previous curiosity score.
+    pub old_score: f64,
+    /// Newly computed curiosity score.
+    pub new_score: f64,
 }
