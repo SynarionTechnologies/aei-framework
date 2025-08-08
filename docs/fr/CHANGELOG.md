@@ -7,6 +7,7 @@ et ce projet adhère à [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Non publié]
 ### Ajouté
+- Module de mémoire adaptative avec commandes événementielles, projection et requêtes.
 - Mutation aléatoire de l’activation des neurones via `MutateRandomNeuronActivationCommand` et `MutateRandomNeuronActivationHandler`.
 - Mutation aléatoire du poids des synapses via `MutateRandomSynapseWeightCommand` et `MutateRandomSynapseWeightHandler`.
 - Exemple orienté événements et tests de commande de synapse.

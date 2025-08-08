@@ -4,6 +4,7 @@ mod add_random_neuron;
 mod add_random_synapse;
 mod command_handler;
 mod commands;
+pub mod memory;
 mod mutate_random_neuron_activation;
 mod mutate_random_synapse_weight;
 mod queries;
