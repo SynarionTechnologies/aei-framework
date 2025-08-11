@@ -148,7 +148,7 @@ handler
         score: 0.7,
     })
     .unwrap();
-let mut store = handler.store;
+let mut store = handler.base.store;
 let events = store.load().unwrap();
 let projection = MemoryProjection::from_events(50, &events);
 let qh = MemoryQueryHandler::new(&projection);
