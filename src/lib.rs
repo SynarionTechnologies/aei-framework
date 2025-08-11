@@ -27,4 +27,6 @@ pub use domain::{
     Neuron, NeuronActivationMutated, RandomNeuronAdded, RandomNeuronRemoved, RandomSynapseAdded,
     RandomSynapseRemoved, Synapse, SynapseWeightMutated,
 };
-pub use infrastructure::{EventStore, FileEventStore, FileMemoryEventStore, MemoryEventStore};
+pub use infrastructure::{
+    EventStore, FileEventStore, FileMemoryEventStore, JsonlEventStore, MemoryEventStore,
+};

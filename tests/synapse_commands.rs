@@ -2,7 +2,7 @@ use std::path::PathBuf;
 
 use aei_framework::{
     Activation, AddRandomSynapseCommand, AddRandomSynapseError, AddRandomSynapseHandler, Event,
-    EventStore, FileEventStore, RandomNeuronAdded, RandomSynapseAdded, RandomSynapseRemoved,
+    FileEventStore, RandomNeuronAdded, RandomSynapseAdded, RandomSynapseRemoved,
     RemoveRandomSynapseCommand, RemoveRandomSynapseError, RemoveRandomSynapseHandler,
 };
 use rand::SeedableRng;

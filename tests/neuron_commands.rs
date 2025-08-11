@@ -1,9 +1,8 @@
 use std::path::PathBuf;
 
 use aei_framework::{
-    AddRandomNeuronCommand, AddRandomNeuronHandler, Event, EventStore, FileEventStore,
-    RandomNeuronAdded, RemoveRandomNeuronCommand, RemoveRandomNeuronError,
-    RemoveRandomNeuronHandler,
+    AddRandomNeuronCommand, AddRandomNeuronHandler, Event, FileEventStore, RandomNeuronAdded,
+    RemoveRandomNeuronCommand, RemoveRandomNeuronError, RemoveRandomNeuronHandler,
 };
 use rand::SeedableRng;
 use rand_chacha::ChaCha8Rng;

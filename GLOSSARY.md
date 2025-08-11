@@ -20,6 +20,9 @@ An immutable record describing a state change that occurred as a result of handl
 ### Event Store
 Persistent storage responsible for appending and loading domain events. Implementations live under [src/infrastructure/event_store.rs](src/infrastructure/event_store.rs).
 
+### JsonlEventStore
+Generic event store persisting events as JSON Lines files. See [src/infrastructure/jsonl_event_store.rs](src/infrastructure/jsonl_event_store.rs).
+
 ### Event Sourcing
 Architectural pattern in which state is derived from a log of events rather than being stored directly. The AEI Framework rebuilds aggregates by replaying events from the store.
 

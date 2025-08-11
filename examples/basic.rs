@@ -1,7 +1,7 @@
 use aei_framework::{
     infrastructure::{projection::NetworkProjection, FileEventStore},
     AddRandomNeuronCommand, AddRandomNeuronHandler, AddRandomSynapseCommand,
-    AddRandomSynapseHandler, EventStore, Query, QueryHandler, QueryResult,
+    AddRandomSynapseHandler, Query, QueryHandler, QueryResult,
 };
 use rand::thread_rng;
 
