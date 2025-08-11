@@ -20,6 +20,9 @@ Enregistrement immuable décrivant un changement d'état survenu suite au traite
 ### Magasin d'événements
 Stockage persistant chargé d'ajouter et de charger les événements de domaine. Les implémentations se trouvent dans [src/infrastructure/event_store.rs](../../src/infrastructure/event_store.rs).
 
+### JsonlEventStore
+Magasin d'événements générique persistant les événements au format JSON Lines. Voir [src/infrastructure/jsonl_event_store.rs](../../src/infrastructure/jsonl_event_store.rs).
+
 ### Event Sourcing
 Modèle architectural où l'état est dérivé d'un journal d'événements plutôt que stocké directement. Le Framework AEI reconstruit les agrégats en rejouant les événements du magasin.
 

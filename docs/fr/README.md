@@ -11,6 +11,10 @@ AEI Framework est un framework Rust open source pour construire des réseaux de 
 - Ajouter ou supprimer des neurones et des synapses à la volée.
 - Fournir une architecture simple et bien documentée.
 
+## Stockage des événements
+
+`JsonlEventStore<T>` persiste tout type d'événement implémentant `Serialize` et `DeserializeOwned` au format JSON Lines. Les alias `FileEventStore` et `FileMemoryEventStore` fournissent des magasins prêts à l'emploi pour les événements de domaine et de mémoire.
+
 ## Ajout aléatoire de neurone
 
 Étendez le réseau en envoyant une commande gérée par l'infrastructure orientée événements :
