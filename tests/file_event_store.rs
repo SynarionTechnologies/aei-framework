@@ -42,7 +42,12 @@ fn append_and_reload_preserves_sequence() {
     let events = store.load().expect("reload should succeed");
     assert_eq!(events.len(), 2);
     match &events[0] {
-        Event::SynapseCreated { id, from: f, to: t, weight } => {
+        Event::SynapseCreated {
+            id,
+            from: f,
+            to: t,
+            weight,
+        } => {
             assert_eq!(*id, synapse_id);
             assert_eq!(*f, from);
             assert_eq!(*t, to);
@@ -56,4 +61,3 @@ fn append_and_reload_preserves_sequence() {
     }
     std::fs::remove_file(path).unwrap();
 }
-
