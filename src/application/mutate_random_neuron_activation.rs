@@ -7,7 +7,8 @@
 use rand::{seq::SliceRandom, Rng};
 use uuid::Uuid;
 
-use crate::domain::{Activation, Event, Network, NeuronActivationMutated};
+use super::NetworkHandlerBase;
+use crate::domain::{Activation, Event, NeuronActivationMutated};
 use crate::infrastructure::EventStore;
 
 /// Command requesting mutation of a random neuron's activation.
@@ -29,22 +30,15 @@ pub enum MutateNeuronActivationError {
 /// Handles [`MutateRandomNeuronActivationCommand`], emitting and applying
 /// [`NeuronActivationMutated`] events.
 pub struct MutateRandomNeuronActivationHandler<S: EventStore, R: Rng> {
-    /// Event store used for persistence.
-    pub store: S,
-    /// Current network state derived from applied events.
-    pub network: Network,
-    rng: R,
+    /// Shared handler state including store, network and RNG.
+    pub base: NetworkHandlerBase<S, R>,
 }
 
 impl<S: EventStore, R: Rng> MutateRandomNeuronActivationHandler<S, R> {
     /// Loads events from the store to initialize the handler.
-    pub fn new(mut store: S, rng: R) -> Result<Self, S::Error> {
-        let events = store.load()?;
-        let network = Network::hydrate(&events);
+    pub fn new(store: S, rng: R) -> Result<Self, S::Error> {
         Ok(Self {
-            store,
-            network,
-            rng,
+            base: NetworkHandlerBase::new(store, rng)?,
         })
     }
 
@@ -75,19 +69,20 @@ impl<S: EventStore, R: Rng> MutateRandomNeuronActivationHandler<S, R> {
         &mut self,
         cmd: MutateRandomNeuronActivationCommand,
     ) -> Result<Uuid, MutateNeuronActivationError> {
-        let mut candidates: Vec<Uuid> = self.network.neurons.keys().copied().collect();
+        let base = &mut self.base;
+        let mut candidates: Vec<Uuid> = base.network.neurons.keys().copied().collect();
         if cmd.exclude_io {
             candidates.retain(|id| {
-                let has_in = self.network.synapses.values().any(|s| s.to == *id);
-                let has_out = self.network.synapses.values().any(|s| s.from == *id);
+                let has_in = base.network.synapses.values().any(|s| s.to == *id);
+                let has_out = base.network.synapses.values().any(|s| s.from == *id);
                 has_in && has_out
             });
         }
         let neuron_id = *candidates
-            .choose(&mut self.rng)
+            .choose(&mut base.rng)
             .ok_or(MutateNeuronActivationError::NoEligibleNeuron)?;
 
-        let old_activation = self
+        let old_activation = base
             .network
             .neurons
             .get(&neuron_id)
@@ -101,7 +96,7 @@ impl<S: EventStore, R: Rng> MutateRandomNeuronActivationHandler<S, R> {
         ];
         activations.retain(|a| *a != old_activation);
         let new_activation = *activations
-            .choose(&mut self.rng)
+            .choose(&mut base.rng)
             .expect("activation list is non-empty");
 
         let event = Event::NeuronActivationMutated(NeuronActivationMutated {
@@ -109,10 +104,10 @@ impl<S: EventStore, R: Rng> MutateRandomNeuronActivationHandler<S, R> {
             old_activation,
             new_activation,
         });
-        self.store
+        base.store
             .append(&event)
             .map_err(|_| MutateNeuronActivationError::StorageError)?;
-        self.network.apply(&event);
+        base.network.apply(&event);
         Ok(neuron_id)
     }
 }

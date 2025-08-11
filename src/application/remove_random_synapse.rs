@@ -3,7 +3,8 @@
 use rand::{seq::SliceRandom, Rng};
 use uuid::Uuid;
 
-use crate::domain::{Event, Network, RandomSynapseRemoved};
+use super::NetworkHandlerBase;
+use crate::domain::{Event, RandomSynapseRemoved};
 use crate::infrastructure::EventStore;
 
 /// Command requesting the removal of a random synapse.
@@ -28,11 +29,8 @@ pub enum RemoveRandomSynapseError {
 
 /// Handles [`RemoveRandomSynapseCommand`], emitting events and updating state.
 pub struct RemoveRandomSynapseHandler<S: EventStore, R: Rng> {
-    /// Event store used for persistence.
-    pub store: S,
-    /// Current network state derived from applied events.
-    pub network: Network,
-    rng: R,
+    /// Shared handler state including store, network and RNG.
+    pub base: NetworkHandlerBase<S, R>,
 }
 
 impl<S: EventStore, R: Rng> RemoveRandomSynapseHandler<S, R> {
@@ -40,13 +38,9 @@ impl<S: EventStore, R: Rng> RemoveRandomSynapseHandler<S, R> {
     ///
     /// # Errors
     /// Propagates storage backend errors.
-    pub fn new(mut store: S, rng: R) -> Result<Self, S::Error> {
-        let events = store.load()?;
-        let network = Network::hydrate(&events);
+    pub fn new(store: S, rng: R) -> Result<Self, S::Error> {
         Ok(Self {
-            store,
-            network,
-            rng,
+            base: NetworkHandlerBase::new(store, rng)?,
         })
     }
 
@@ -76,18 +70,19 @@ impl<S: EventStore, R: Rng> RemoveRandomSynapseHandler<S, R> {
         &mut self,
         _cmd: RemoveRandomSynapseCommand,
     ) -> Result<Uuid, RemoveRandomSynapseError> {
-        let ids: Vec<Uuid> = self.network.synapses.keys().copied().collect();
+        let base = &mut self.base;
+        let ids: Vec<Uuid> = base.network.synapses.keys().copied().collect();
         if ids.is_empty() {
             return Err(RemoveRandomSynapseError::NoSynapseAvailable);
         }
         let synapse_id = *ids
-            .choose(&mut self.rng)
+            .choose(&mut base.rng)
             .expect("candidate list is non-empty");
         let event = Event::RandomSynapseRemoved(RandomSynapseRemoved { synapse_id });
-        self.store
+        base.store
             .append(&event)
             .map_err(|_| RemoveRandomSynapseError::StorageError)?;
-        self.network.apply(&event);
+        base.network.apply(&event);
         Ok(synapse_id)
     }
 }

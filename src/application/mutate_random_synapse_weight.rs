@@ -8,7 +8,8 @@ use rand::{seq::SliceRandom, Rng};
 use rand_distr::{Distribution, Normal};
 use uuid::Uuid;
 
-use crate::domain::{Event, Network, SynapseWeightMutated};
+use super::NetworkHandlerBase;
+use crate::domain::{Event, SynapseWeightMutated};
 use crate::infrastructure::EventStore;
 
 /// Command requesting mutation of a random synapse weight.
@@ -32,22 +33,15 @@ pub enum MutateRandomSynapseWeightError {
 /// Handles [`MutateRandomSynapseWeightCommand`], emitting and applying
 /// [`SynapseWeightMutated`] events.
 pub struct MutateRandomSynapseWeightHandler<S: EventStore, R: Rng> {
-    /// Event store used for persistence.
-    pub store: S,
-    /// Current network state derived from applied events.
-    pub network: Network,
-    rng: R,
+    /// Shared handler state including store, network and RNG.
+    pub base: NetworkHandlerBase<S, R>,
 }
 
 impl<S: EventStore, R: Rng> MutateRandomSynapseWeightHandler<S, R> {
     /// Loads events from the store to initialize the handler.
-    pub fn new(mut store: S, rng: R) -> Result<Self, S::Error> {
-        let events = store.load()?;
-        let network = Network::hydrate(&events);
+    pub fn new(store: S, rng: R) -> Result<Self, S::Error> {
         Ok(Self {
-            store,
-            network,
-            rng,
+            base: NetworkHandlerBase::new(store, rng)?,
         })
     }
 
@@ -81,14 +75,15 @@ impl<S: EventStore, R: Rng> MutateRandomSynapseWeightHandler<S, R> {
         if cmd.std_dev <= 0.0 {
             return Err(MutateRandomSynapseWeightError::InvalidStdDev);
         }
-        let ids: Vec<Uuid> = self.network.synapses.keys().copied().collect();
+        let base = &mut self.base;
+        let ids: Vec<Uuid> = base.network.synapses.keys().copied().collect();
         if ids.is_empty() {
             return Err(MutateRandomSynapseWeightError::NoSynapseAvailable);
         }
         let synapse_id = *ids
-            .choose(&mut self.rng)
+            .choose(&mut base.rng)
             .expect("candidate list is non-empty");
-        let old_weight = self
+        let old_weight = base
             .network
             .synapses
             .get(&synapse_id)
@@ -96,17 +91,17 @@ impl<S: EventStore, R: Rng> MutateRandomSynapseWeightHandler<S, R> {
             .weight;
         let normal = Normal::new(0.0, cmd.std_dev)
             .map_err(|_| MutateRandomSynapseWeightError::InvalidStdDev)?;
-        let noise = normal.sample(&mut self.rng);
+        let noise = normal.sample(&mut base.rng);
         let new_weight = old_weight + noise;
         let event = Event::SynapseWeightMutated(SynapseWeightMutated {
             synapse_id,
             old_weight,
             new_weight,
         });
-        self.store
+        base.store
             .append(&event)
             .map_err(|_| MutateRandomSynapseWeightError::StorageError)?;
-        self.network.apply(&event);
+        base.network.apply(&event);
         Ok(synapse_id)
     }
 }

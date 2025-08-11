@@ -16,8 +16,8 @@ pub use application::{
     AddRandomSynapseError, AddRandomSynapseHandler, Command, CommandHandler, CuriosityScope,
     MutateNeuronActivationError, MutateRandomNeuronActivationCommand,
     MutateRandomNeuronActivationHandler, MutateRandomSynapseWeightCommand,
-    MutateRandomSynapseWeightError, MutateRandomSynapseWeightHandler, Query, QueryHandler,
-    QueryResult, RecalculateCuriosityScoreCommand, RecalculateCuriosityScoreHandler,
+    MutateRandomSynapseWeightError, MutateRandomSynapseWeightHandler, NetworkHandlerBase, Query,
+    QueryHandler, QueryResult, RecalculateCuriosityScoreCommand, RecalculateCuriosityScoreHandler,
     RemoveRandomNeuronCommand, RemoveRandomNeuronError, RemoveRandomNeuronHandler,
     RemoveRandomSynapseCommand, RemoveRandomSynapseError, RemoveRandomSynapseHandler,
 };

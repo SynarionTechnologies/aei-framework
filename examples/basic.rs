@@ -20,7 +20,7 @@ fn main() {
         .expect("second neuron");
 
     // Reuse the same event store to add a synapse between them.
-    let store = add_neuron.store;
+    let store = add_neuron.base.store;
     let mut add_synapse = AddRandomSynapseHandler::new(store, thread_rng()).expect("store");
     let syn = add_synapse
         .handle(AddRandomSynapseCommand)
@@ -28,7 +28,7 @@ fn main() {
     println!("Added neurons {n1} and {n2} with synapse {syn}");
 
     // Build a projection and query neuron information.
-    let mut store = add_synapse.store;
+    let mut store = add_synapse.base.store;
     let events = store.load().expect("load events");
     let projection = NetworkProjection::from_events(&events);
     let handler = QueryHandler::new(&projection);

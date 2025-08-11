@@ -62,7 +62,7 @@ fn mutate_synapse_weight_appends_event() {
         .unwrap();
     assert_eq!(mutated_id, syn_id);
 
-    let mut store = handler.store;
+    let mut store = handler.base.store;
     let events = store.load().unwrap();
     match events.last().unwrap() {
         Event::SynapseWeightMutated(SynapseWeightMutated {
@@ -74,7 +74,13 @@ fn mutate_synapse_weight_appends_event() {
             assert_eq!(*old_weight, 1.0);
             assert_ne!(*new_weight, *old_weight);
             assert_eq!(
-                handler.network.synapses.get(synapse_id).unwrap().weight,
+                handler
+                    .base
+                    .network
+                    .synapses
+                    .get(synapse_id)
+                    .unwrap()
+                    .weight,
                 *new_weight
             );
         }
@@ -111,7 +117,7 @@ fn mutate_synapse_weight_event_replay() {
         .handle(MutateRandomSynapseWeightCommand { std_dev: 0.5 })
         .unwrap();
 
-    let store = handler.store;
+    let store = handler.base.store;
     let mut replay_store = store;
     let events = replay_store.load().unwrap();
     let net = aei_framework::DomainNetwork::hydrate(&events);

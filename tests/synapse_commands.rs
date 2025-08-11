@@ -52,9 +52,9 @@ fn add_random_synapse_appends_event() {
     let rng = ChaCha8Rng::seed_from_u64(1);
     let mut handler = AddRandomSynapseHandler::new(store, rng).unwrap();
     let syn_id = handler.handle(AddRandomSynapseCommand).unwrap();
-    assert!(handler.network.synapses.contains_key(&syn_id));
+    assert!(handler.base.network.synapses.contains_key(&syn_id));
 
-    let mut store = handler.store;
+    let mut store = handler.base.store;
     let events = store.load().unwrap();
     match events.last().unwrap() {
         Event::RandomSynapseAdded(RandomSynapseAdded { synapse_id, .. }) => {
@@ -115,9 +115,9 @@ fn remove_random_synapse_appends_event() {
     let removed_id = handler
         .handle(RemoveRandomSynapseCommand)
         .expect("synapse removed");
-    assert!(!handler.network.synapses.contains_key(&removed_id));
+    assert!(!handler.base.network.synapses.contains_key(&removed_id));
 
-    let mut store = handler.store;
+    let mut store = handler.base.store;
     let events = store.load().unwrap();
     match events.last().unwrap() {
         Event::RandomSynapseRemoved(RandomSynapseRemoved { synapse_id }) => {
@@ -156,7 +156,7 @@ fn remove_random_synapse_event_replay() {
         .handle(RemoveRandomSynapseCommand)
         .expect("synapse removed");
 
-    let store = handler.store;
+    let store = handler.base.store;
     let mut replay_store = store;
     let events = replay_store.load().unwrap();
     let net = aei_framework::DomainNetwork::hydrate(&events);

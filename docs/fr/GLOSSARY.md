@@ -29,6 +29,9 @@ Modèle architectural où l'état est dérivé d'un journal d'événements plut�
 ### Gestionnaire de commande
 Composant qui valide et exécute une commande, émettant un ou plusieurs événements. Exemples : [AddRandomNeuronHandler](../../src/application/add_random_neuron.rs) et [RemoveRandomNeuronHandler](../../src/application/remove_random_neuron.rs).
 
+### NetworkHandlerBase
+Structure de base regroupant le magasin d'événements, le réseau hydraté et le générateur de nombres aléatoires pour les gestionnaires de commandes opérant sur les réseaux.
+
 ### Gestionnaire de requête
 Composant qui sert une requête en lisant depuis une projection ou un modèle de lecture. Voir [src/application/query_handler.rs](../../src/application/query_handler.rs).
 
@@ -59,8 +62,8 @@ Commande qui supprime un neurone choisi aléatoirement du réseau. Implémentée
 ### AddRandomSynapseCommand
 Commande qui crée une synapse entre deux neurones choisis aléatoirement. Implémentée dans [src/application/add_random_synapse.rs](../../src/application/add_random_synapse.rs).
 
-## RemoveRandomSynapseCommand
-Commande demandant la suppression d'une synapse aléatoire du réseau. Implémentée dans [src/application/add_random_synapse.rs](../../src/application/remove_random_synapse.rs).
+### RemoveRandomSynapseCommand
+Commande demandant la suppression d'une synapse aléatoire du réseau. Implémentée dans [src/application/remove_random_synapse.rs](../../src/application/remove_random_synapse.rs).
 
 ### MutateRandomSynapseWeightCommand
 Commande qui applique un bruit gaussien au poids d'une synapse choisie aléatoirement. Implémentée dans [src/application/mutate_random_synapse_weight.rs](../../src/application/mutate_random_synapse_weight.rs).
