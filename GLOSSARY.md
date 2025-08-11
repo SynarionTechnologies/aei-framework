@@ -29,6 +29,9 @@ Architectural pattern in which state is derived from a log of events rather than
 ### Command Handler
 Component that validates and executes a command, emitting one or more events. Examples include [AddRandomNeuronHandler](src/application/add_random_neuron.rs) and [RemoveRandomNeuronHandler](src/application/remove_random_neuron.rs).
 
+### NetworkHandlerBase
+Shared structure bundling an event store, a hydrated [`Network`](src/domain/network.rs), and a random number generator for command handlers operating on networks.
+
 ### Query Handler
 Component that serves a query by reading from a projection or read model. See [src/application/query_handler.rs](src/application/query_handler.rs).
 

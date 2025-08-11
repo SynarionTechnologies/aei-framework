@@ -40,7 +40,7 @@ fn mutate_neuron_activation_appends_event() {
         .unwrap();
     assert_eq!(mutated_id, neuron_id);
 
-    let mut store = handler.store;
+    let mut store = handler.base.store;
     let events = store.load().unwrap();
     match events.last().unwrap() {
         Event::NeuronActivationMutated(NeuronActivationMutated {
@@ -52,7 +52,7 @@ fn mutate_neuron_activation_appends_event() {
             assert_eq!(*old_activation, Activation::Identity);
             assert_ne!(*old_activation, *new_activation);
             assert_eq!(
-                handler.network.neurons.get(id).unwrap().activation,
+                handler.base.network.neurons.get(id).unwrap().activation,
                 *new_activation
             );
         }
@@ -102,7 +102,7 @@ fn mutate_neuron_activation_event_replay() {
     handler
         .handle(MutateRandomNeuronActivationCommand { exclude_io: false })
         .unwrap();
-    let store = handler.store;
+    let store = handler.base.store;
     let mut replay_store = store;
     let events = replay_store.load().unwrap();
     let net = aei_framework::DomainNetwork::hydrate(&events);

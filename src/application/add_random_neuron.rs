@@ -3,8 +3,8 @@
 use rand::{seq::SliceRandom, Rng};
 use uuid::Uuid;
 
-use crate::domain::Activation;
-use crate::domain::{Event, Network, RandomNeuronAdded};
+use super::NetworkHandlerBase;
+use crate::domain::{Activation, Event, RandomNeuronAdded};
 use crate::infrastructure::EventStore;
 
 /// Command requesting the addition of a randomly configured neuron.
@@ -20,22 +20,15 @@ pub enum AddRandomNeuronError {
 
 /// Handles [`AddRandomNeuronCommand`], emitting events and updating state.
 pub struct AddRandomNeuronHandler<S: EventStore, R: Rng> {
-    /// Event store used for persistence.
-    pub store: S,
-    /// Current network state derived from applied events.
-    pub network: Network,
-    rng: R,
+    /// Shared handler state including store, network and RNG.
+    pub base: NetworkHandlerBase<S, R>,
 }
 
 impl<S: EventStore, R: Rng> AddRandomNeuronHandler<S, R> {
     /// Loads events from the store to initialize the handler.
-    pub fn new(mut store: S, rng: R) -> Result<Self, S::Error> {
-        let events = store.load()?;
-        let network = Network::hydrate(&events);
+    pub fn new(store: S, rng: R) -> Result<Self, S::Error> {
         Ok(Self {
-            store,
-            network,
-            rng,
+            base: NetworkHandlerBase::new(store, rng)?,
         })
     }
 
@@ -47,21 +40,22 @@ impl<S: EventStore, R: Rng> AddRandomNeuronHandler<S, R> {
             Activation::ReLU,
             Activation::Tanh,
         ];
+        let base = &mut self.base;
         let activation = *activations
-            .choose(&mut self.rng)
+            .choose(&mut base.rng)
             .expect("activation list is non-empty");
         let neuron_id = Uuid::new_v4();
         let event = Event::RandomNeuronAdded(RandomNeuronAdded {
             neuron_id,
             activation,
         });
-        self.store
+        base.store
             .append(&event)
             .map_err(|_| AddRandomNeuronError::StorageError)?;
-        self.network.apply(&event);
+        base.network.apply(&event);
 
         // Attach at least one random synapse if other neurons exist.
-        let mut others: Vec<Uuid> = self
+        let mut others: Vec<Uuid> = base
             .network
             .neurons
             .keys()
@@ -69,12 +63,12 @@ impl<S: EventStore, R: Rng> AddRandomNeuronHandler<S, R> {
             .filter(|id| *id != neuron_id)
             .collect();
         if !others.is_empty() {
-            let count = self.rng.gen_range(1..=others.len());
-            others.shuffle(&mut self.rng);
+            let count = base.rng.gen_range(1..=others.len());
+            others.shuffle(&mut base.rng);
             for target in others.into_iter().take(count) {
-                let weight = self.rng.gen_range(-1.0..=1.0);
+                let weight = base.rng.gen_range(-1.0..=1.0);
                 let syn_id = Uuid::new_v4();
-                let event = if self.rng.gen_bool(0.5) {
+                let event = if base.rng.gen_bool(0.5) {
                     Event::SynapseCreated {
                         id: syn_id,
                         from: target,
@@ -89,10 +83,10 @@ impl<S: EventStore, R: Rng> AddRandomNeuronHandler<S, R> {
                         weight,
                     }
                 };
-                self.store
+                base.store
                     .append(&event)
                     .map_err(|_| AddRandomNeuronError::StorageError)?;
-                self.network.apply(&event);
+                base.network.apply(&event);
             }
         }
 

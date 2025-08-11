@@ -3,7 +3,8 @@
 use rand::{seq::SliceRandom, Rng};
 use uuid::Uuid;
 
-use crate::domain::{Event, Network, RandomNeuronRemoved};
+use super::NetworkHandlerBase;
+use crate::domain::{Event, RandomNeuronRemoved};
 use crate::infrastructure::EventStore;
 
 /// Command requesting the removal of a random neuron.
@@ -21,22 +22,15 @@ pub enum RemoveRandomNeuronError {
 
 /// Handles [`RemoveRandomNeuronCommand`], emitting events and updating state.
 pub struct RemoveRandomNeuronHandler<S: EventStore, R: Rng> {
-    /// Event store used for persistence.
-    pub store: S,
-    /// Current network state derived from applied events.
-    pub network: Network,
-    rng: R,
+    /// Shared handler state including store, network and RNG.
+    pub base: NetworkHandlerBase<S, R>,
 }
 
 impl<S: EventStore, R: Rng> RemoveRandomNeuronHandler<S, R> {
     /// Loads events from the store to initialize the handler.
-    pub fn new(mut store: S, rng: R) -> Result<Self, S::Error> {
-        let events = store.load()?;
-        let network = Network::hydrate(&events);
+    pub fn new(store: S, rng: R) -> Result<Self, S::Error> {
         Ok(Self {
-            store,
-            network,
-            rng,
+            base: NetworkHandlerBase::new(store, rng)?,
         })
     }
 
@@ -45,18 +39,19 @@ impl<S: EventStore, R: Rng> RemoveRandomNeuronHandler<S, R> {
         &mut self,
         _cmd: RemoveRandomNeuronCommand,
     ) -> Result<Uuid, RemoveRandomNeuronError> {
-        let ids: Vec<Uuid> = self.network.neurons.keys().copied().collect();
+        let base = &mut self.base;
+        let ids: Vec<Uuid> = base.network.neurons.keys().copied().collect();
         if ids.is_empty() {
             return Err(RemoveRandomNeuronError::NoNeuronAvailable);
         }
         let neuron_id = *ids
-            .choose(&mut self.rng)
+            .choose(&mut base.rng)
             .expect("candidate list is non-empty");
         let event = Event::RandomNeuronRemoved(RandomNeuronRemoved { neuron_id });
-        self.store
+        base.store
             .append(&event)
             .map_err(|_| RemoveRandomNeuronError::StorageError)?;
-        self.network.apply(&event);
+        base.network.apply(&event);
         Ok(neuron_id)
     }
 }

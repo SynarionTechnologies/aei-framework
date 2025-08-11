@@ -24,7 +24,7 @@ fn add_random_neuron_appends_event() {
     let id = handler
         .handle(AddRandomNeuronCommand)
         .expect("neuron added");
-    assert!(handler.network.neurons.contains_key(&id));
+    assert!(handler.base.network.neurons.contains_key(&id));
 
     let mut store = FileEventStore::new(path);
     let events = store.load().unwrap();
@@ -53,18 +53,18 @@ fn remove_random_neuron_removes_synapses() {
         to: id2,
         weight: 1.0,
     };
-    add.store.append(&event).unwrap();
-    add.network.apply(&event);
+    add.base.store.append(&event).unwrap();
+    add.base.network.apply(&event);
 
     // Recreate handler to ensure state is loaded from events.
-    let store = add.store; // reuse path via move
+    let store = add.base.store; // reuse path via move
     let rng = ChaCha8Rng::seed_from_u64(2);
     let mut remove = RemoveRandomNeuronHandler::new(store, rng).unwrap();
     let removed_id = remove
         .handle(RemoveRandomNeuronCommand)
         .expect("removed neuron");
-    assert!(!remove.network.neurons.contains_key(&removed_id));
-    assert!(remove.network.synapses.is_empty());
+    assert!(!remove.base.network.neurons.contains_key(&removed_id));
+    assert!(remove.base.network.synapses.is_empty());
 }
 
 #[test]
@@ -88,13 +88,13 @@ fn event_replay_reconstructs_state() {
     let mut add = AddRandomNeuronHandler::new(store, rng).unwrap();
     let id = add.handle(AddRandomNeuronCommand).unwrap();
 
-    let store = add.store; // move
+    let store = add.base.store; // move
     let rng = ChaCha8Rng::seed_from_u64(6);
     let mut remove = RemoveRandomNeuronHandler::new(store, rng).unwrap();
     remove.handle(RemoveRandomNeuronCommand).unwrap();
 
     // Load all events and rebuild network
-    let store = remove.store; // move
+    let store = remove.base.store; // move
     let mut replay_store = store; // same path
     let events = replay_store.load().unwrap();
     let net = aei_framework::DomainNetwork::hydrate(&events);
