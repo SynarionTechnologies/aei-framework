@@ -142,4 +142,94 @@ mod tests {
         let memory = AdaptiveMemory::hydrate(10, &events);
         assert_eq!(memory.entries.len(), 1);
     }
+
+    #[test]
+    fn apply_entry_removed_removes_entry() {
+        let id_to_remove = Uuid::new_v4();
+        let id_to_keep = Uuid::new_v4();
+        let mut memory = AdaptiveMemory {
+            entries: vec![
+                MemoryEntry {
+                    id: id_to_remove,
+                    timestamp: Utc::now(),
+                    event_type: "a".into(),
+                    payload: json!({}),
+                    score: 0.1,
+                },
+                MemoryEntry {
+                    id: id_to_keep,
+                    timestamp: Utc::now(),
+                    event_type: "b".into(),
+                    payload: json!({}),
+                    score: 0.2,
+                },
+            ],
+            max_size: 10,
+        };
+        memory.apply(&MemoryEvent::MemoryEntryRemoved(MemoryEntryRemoved {
+            entry_id: id_to_remove,
+        }));
+        assert!(memory.entries.iter().all(|e| e.id != id_to_remove));
+        assert!(memory.entries.iter().any(|e| e.id == id_to_keep));
+    }
+
+    #[test]
+    fn apply_pruned_removes_multiple_entries() {
+        let id1 = Uuid::new_v4();
+        let id2 = Uuid::new_v4();
+        let id3 = Uuid::new_v4();
+        let mut memory = AdaptiveMemory {
+            entries: vec![
+                MemoryEntry {
+                    id: id1,
+                    timestamp: Utc::now(),
+                    event_type: "a".into(),
+                    payload: json!({}),
+                    score: 0.1,
+                },
+                MemoryEntry {
+                    id: id2,
+                    timestamp: Utc::now(),
+                    event_type: "b".into(),
+                    payload: json!({}),
+                    score: 0.2,
+                },
+                MemoryEntry {
+                    id: id3,
+                    timestamp: Utc::now(),
+                    event_type: "c".into(),
+                    payload: json!({}),
+                    score: 0.3,
+                },
+            ],
+            max_size: 10,
+        };
+        memory.apply(&MemoryEvent::MemoryPruned(MemoryPruned {
+            removed_entries: vec![id1, id3],
+        }));
+        assert_eq!(memory.entries.len(), 1);
+        assert_eq!(memory.entries[0].id, id2);
+    }
+
+    #[test]
+    fn apply_score_updated_updates_score() {
+        let id = Uuid::new_v4();
+        let mut memory = AdaptiveMemory {
+            entries: vec![MemoryEntry {
+                id,
+                timestamp: Utc::now(),
+                event_type: "a".into(),
+                payload: json!({}),
+                score: 0.1,
+            }],
+            max_size: 10,
+        };
+        memory.apply(&MemoryEvent::MemoryScoreUpdated(MemoryScoreUpdated {
+            entry_id: id,
+            old_score: 0.1,
+            new_score: 0.9,
+        }));
+        let entry = memory.entries.iter().find(|e| e.id == id).unwrap();
+        assert_eq!(entry.score, 0.9);
+    }
 }
