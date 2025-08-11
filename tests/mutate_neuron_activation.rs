@@ -6,7 +6,7 @@ use aei_framework::{
         MutateRandomNeuronActivationHandler, Query, QueryHandler, QueryResult,
     },
     domain::{Activation, Event, NeuronActivationMutated, RandomNeuronAdded},
-    infrastructure::{projection::NetworkProjection, EventStore, FileEventStore},
+    infrastructure::{projection::NetworkProjection, FileEventStore},
 };
 use rand::SeedableRng;
 use rand_chacha::ChaCha8Rng;

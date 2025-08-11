@@ -6,7 +6,7 @@ use aei_framework::{
         MutateRandomSynapseWeightHandler, Query, QueryHandler, QueryResult,
     },
     domain::{Event, RandomNeuronAdded, RandomSynapseAdded, SynapseWeightMutated},
-    infrastructure::{projection::NetworkProjection, EventStore, FileEventStore},
+    infrastructure::{projection::NetworkProjection, FileEventStore},
     Activation,
 };
 use rand::SeedableRng;

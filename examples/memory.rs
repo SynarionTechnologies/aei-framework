@@ -11,7 +11,6 @@ use aei_framework::{
         UpdateMemoryScoreHandler,
     },
     infrastructure::{projection::MemoryProjection, FileMemoryEventStore},
-    MemoryEventStore,
 };
 use serde_json::json;
 use uuid::Uuid;
