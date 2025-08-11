@@ -3,7 +3,7 @@ use aei_framework::application::memory::{
     RemoveMemoryEntryCommand, RemoveMemoryEntryHandler, UpdateMemoryScoreCommand,
     UpdateMemoryScoreHandler,
 };
-use aei_framework::domain::{AdaptiveMemory, MemoryEvent};
+use aei_framework::domain::{AdaptiveMemory, MemoryEntry, MemoryEntryAdded, MemoryEvent};
 use aei_framework::infrastructure::projection::MemoryProjection;
 use aei_framework::infrastructure::MemoryEventStore;
 use serde_json::json;
@@ -134,4 +134,45 @@ fn replay_from_event_store() {
     let events = handler.store.events.clone();
     let memory = AdaptiveMemory::hydrate(10, &events);
     assert!(memory.entries.iter().any(|e| e.id == id));
+}
+
+#[test]
+fn top_entries_returns_highest_scores_in_descending_order() {
+    use chrono::Utc;
+    use uuid::Uuid;
+
+    let events = vec![
+        MemoryEvent::MemoryEntryAdded(MemoryEntryAdded {
+            entry: MemoryEntry {
+                id: Uuid::new_v4(),
+                timestamp: Utc::now(),
+                event_type: "a".into(),
+                payload: json!({}),
+                score: 0.1,
+            },
+        }),
+        MemoryEvent::MemoryEntryAdded(MemoryEntryAdded {
+            entry: MemoryEntry {
+                id: Uuid::new_v4(),
+                timestamp: Utc::now(),
+                event_type: "b".into(),
+                payload: json!({}),
+                score: 0.9,
+            },
+        }),
+        MemoryEvent::MemoryEntryAdded(MemoryEntryAdded {
+            entry: MemoryEntry {
+                id: Uuid::new_v4(),
+                timestamp: Utc::now(),
+                event_type: "c".into(),
+                payload: json!({}),
+                score: 0.5,
+            },
+        }),
+    ];
+
+    let projection = MemoryProjection::from_events(10, &events);
+    let top = projection.top_entries(2);
+    assert_eq!(top.len(), 2);
+    assert!(top[0].score > top[1].score);
 }
