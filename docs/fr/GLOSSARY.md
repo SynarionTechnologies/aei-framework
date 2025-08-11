@@ -32,6 +32,9 @@ Composant qui valide et exécute une commande, émettant un ou plusieurs événe
 ### NetworkHandlerBase
 Structure de base regroupant le magasin d'événements, le réseau hydraté et le générateur de nombres aléatoires pour les gestionnaires de commandes opérant sur les réseaux.
 
+### MemoryHandlerBase
+Structure de base regroupant le magasin d'événements mémoire et la [`AdaptiveMemory`](../../src/domain/memory) hydratée, fournissant des fonctions utilitaires pour persister les événements et élaguer les entrées.
+
 ### Gestionnaire de requête
 Composant qui sert une requête en lisant depuis une projection ou un modèle de lecture. Voir [src/application/query_handler.rs](../../src/application/query_handler.rs).
 

@@ -32,6 +32,9 @@ Component that validates and executes a command, emitting one or more events. Ex
 ### NetworkHandlerBase
 Shared structure bundling an event store, a hydrated [`Network`](src/domain/network.rs), and a random number generator for command handlers operating on networks.
 
+### MemoryHandlerBase
+Shared structure bundling a memory event store and hydrated [`AdaptiveMemory`](src/domain/memory) with helpers to persist events and prune entries.
+
 ### Query Handler
 Component that serves a query by reading from a projection or read model. See [src/application/query_handler.rs](src/application/query_handler.rs).
 

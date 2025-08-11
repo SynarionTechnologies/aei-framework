@@ -1,10 +1,12 @@
 //! Application layer for adaptive memory commands and queries.
 
+pub mod base;
 pub mod commands;
 pub mod handlers;
 pub mod queries;
 pub mod query_handler;
 
+pub use base::MemoryHandlerBase;
 pub use commands::{
     AddMemoryEntryCommand, PruneMemoryCommand, RemoveMemoryEntryCommand, UpdateMemoryScoreCommand,
 };

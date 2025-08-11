@@ -32,7 +32,7 @@ fn main() {
         .expect("add entry");
 
     // Update the score of that entry.
-    let store = add.store;
+    let store = add.base.store;
     let mut update = UpdateMemoryScoreHandler::new(store, 10).expect("store");
     update
         .handle(UpdateMemoryScoreCommand {
@@ -42,7 +42,7 @@ fn main() {
         .expect("update score");
 
     // Build a projection and query the top entry.
-    let mut store = update.store;
+    let mut store = update.base.store;
     let events = store.load().expect("load events");
     let projection = MemoryProjection::from_events(10, &events);
     if let Some(entry) = projection.top_entries(1).first() {

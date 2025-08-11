@@ -37,8 +37,8 @@ fn add_and_query_memory_entry() {
             score: 0.8,
         })
         .unwrap();
-    assert!(handler.memory.entries.iter().any(|e| e.id == id));
-    let projection = MemoryProjection::from_events(10, &handler.store.events);
+    assert!(handler.base.memory.entries.iter().any(|e| e.id == id));
+    let projection = MemoryProjection::from_events(10, &handler.base.store.events);
     let qh = MemoryQueryHandler::new(&projection);
     match qh.handle(MemoryQuery::GetEntryById { id }) {
         aei_framework::application::memory::MemoryQueryResult::Entry(Some(e)) => {
@@ -59,12 +59,12 @@ fn remove_memory_entry() {
             score: 0.2,
         })
         .unwrap();
-    let store = add.store;
+    let store = add.base.store;
     let mut remove = RemoveMemoryEntryHandler::new(store, 10).unwrap();
     remove
         .handle(RemoveMemoryEntryCommand { entry_id: id })
         .unwrap();
-    assert!(remove.memory.entries.is_empty());
+    assert!(remove.base.memory.entries.is_empty());
 }
 
 #[test]
@@ -78,7 +78,7 @@ fn update_memory_score() {
             score: 0.2,
         })
         .unwrap();
-    let store = add.store;
+    let store = add.base.store;
     let mut update = UpdateMemoryScoreHandler::new(store, 10).unwrap();
     update
         .handle(UpdateMemoryScoreCommand {
@@ -88,6 +88,7 @@ fn update_memory_score() {
         .unwrap();
     assert_eq!(
         update
+            .base
             .memory
             .entries
             .iter()
@@ -116,8 +117,8 @@ fn prune_on_capacity_exceeded() {
             score: 0.9,
         })
         .unwrap();
-    assert_eq!(handler.memory.entries.len(), 1);
-    assert_eq!(handler.memory.entries[0].id, id2);
+    assert_eq!(handler.base.memory.entries.len(), 1);
+    assert_eq!(handler.base.memory.entries[0].id, id2);
 }
 
 #[test]
@@ -131,7 +132,7 @@ fn replay_from_event_store() {
             score: 0.5,
         })
         .unwrap();
-    let events = handler.store.events.clone();
+    let events = handler.base.store.events.clone();
     let memory = AdaptiveMemory::hydrate(10, &events);
     assert!(memory.entries.iter().any(|e| e.id == id));
 }

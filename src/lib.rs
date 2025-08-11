@@ -6,8 +6,8 @@ pub mod domain;
 pub mod infrastructure;
 
 pub use application::memory::{
-    AddMemoryEntryCommand, AddMemoryEntryError, AddMemoryEntryHandler, MemoryQuery,
-    MemoryQueryHandler, MemoryQueryResult, PruneMemoryCommand, PruneMemoryError,
+    AddMemoryEntryCommand, AddMemoryEntryError, AddMemoryEntryHandler, MemoryHandlerBase,
+    MemoryQuery, MemoryQueryHandler, MemoryQueryResult, PruneMemoryCommand, PruneMemoryError,
     PruneMemoryHandler, RemoveMemoryEntryCommand, RemoveMemoryEntryError, RemoveMemoryEntryHandler,
     UpdateMemoryScoreCommand, UpdateMemoryScoreError, UpdateMemoryScoreHandler,
 };
