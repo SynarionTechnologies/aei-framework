@@ -97,3 +97,9 @@ Fonction non linéaire appliquée à l'entrée d'un neurone pour produire sa sor
 
 ### Score de curiosité
 Métrique représentant le potentiel exploratoire d'un neurone ou d'une synapse. Recalculé via `RecalculateCuriosityScoreCommand` et persisté par des événements `CuriosityScoreUpdated`.
+
+### Projection du score de curiosité
+Modèle de lecture associant des identifiants aux scores de curiosité. Voir [src/infrastructure/projection/curiosity.rs](../../src/infrastructure/projection/curiosity.rs).
+
+### Requête GetCuriosityScore
+Requête récupérant le score de curiosité d'un neurone ou d'une synapse via [`QueryHandler`](../../src/application/query_handler.rs).

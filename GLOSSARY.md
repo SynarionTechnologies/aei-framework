@@ -97,3 +97,9 @@ Domain event emitted when a neuron is removed from the network. Result of `Remov
 
 ### Curiosity Score
 Metric representing the exploratory potential of a neuron or synapse. Recomputed via `RecalculateCuriosityScoreCommand` and stored through `CuriosityScoreUpdated` events.
+
+### CuriosityScoreProjection
+Read model mapping identifiers to curiosity scores. See [src/infrastructure/projection/curiosity.rs](src/infrastructure/projection/curiosity.rs).
+
+### GetCuriosityScore Query
+Query retrieving a curiosity score for a neuron or synapse via [`QueryHandler`](src/application/query_handler.rs).
