@@ -11,7 +11,7 @@ pub use activation::Activation;
 pub use events::{
     CuriosityScoreUpdated, Event, NeuronActivationMutated, NeuronAdded, NeuronRemoved,
     RandomNeuronAdded, RandomNeuronRemoved, RandomSynapseAdded, RandomSynapseRemoved,
-    SynapseWeightMutated,
+    SynapseWeightMutated, SynapseWeightSet,
 };
 pub use memory::{
     AdaptiveMemory, MemoryEntry, MemoryEntryAdded, MemoryEntryRemoved, MemoryEvent, MemoryPruned,

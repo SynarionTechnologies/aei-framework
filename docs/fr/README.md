@@ -105,6 +105,22 @@ if let Ok(removed_id) = handler.handle(RemoveRandomSynapseCommand) {
 }
 ```
 
+## Définir le poids d'une synapse
+
+Assignez un poids précis à une synapse existante :
+
+```rust
+use aei_framework::{SetSynapseWeightCommand, SetSynapseWeightHandler, FileEventStore};
+use std::path::PathBuf;
+
+let store = FileEventStore::new(PathBuf::from("events.log"));
+let mut handler = SetSynapseWeightHandler::new(store).unwrap();
+let synapse_id = uuid::Uuid::new_v4(); // identifiant d'une synapse existante
+handler
+    .handle(SetSynapseWeightCommand { synapse_id, new_weight: 0.5 })
+    .unwrap();
+```
+
 ## Mutation aléatoire du poids d'une synapse
 
 Ajustez le poids d'une synapse en ajoutant un bruit gaussien :

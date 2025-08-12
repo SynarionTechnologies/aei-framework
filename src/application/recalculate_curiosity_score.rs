@@ -105,6 +105,7 @@ impl<S: EventStore> RecalculateCuriosityScoreHandler<S> {
             Event::RandomSynapseAdded(e) => e.synapse_id == id || e.from == id || e.to == id,
             Event::RandomSynapseRemoved(e) => e.synapse_id == id,
             Event::SynapseWeightMutated(e) => e.synapse_id == id,
+            Event::SynapseWeightSet(e) => e.synapse_id == id,
             Event::NeuronActivationMutated(e) => e.neuron_id == id,
             Event::CuriosityScoreUpdated(e) => e.target_id == id,
         }
