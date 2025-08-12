@@ -23,15 +23,11 @@ impl<S: EventStore> CommandHandler<S> {
     /// Handles a command by converting it to an event and applying it.
     pub fn handle(&mut self, command: Command) -> Result<(), S::Error> {
         let event = match command {
-            Command::CreateNeuron { id, activation } => {
-                Event::NeuronAdded(NeuronAdded {
-                    neuron_id: id,
-                    activation,
-                })
-            }
-            Command::RemoveNeuron { id } => {
-                Event::NeuronRemoved(NeuronRemoved { neuron_id: id })
-            }
+            Command::CreateNeuron { id, activation } => Event::NeuronAdded(NeuronAdded {
+                neuron_id: id,
+                activation,
+            }),
+            Command::RemoveNeuron { id } => Event::NeuronRemoved(NeuronRemoved { neuron_id: id }),
             Command::CreateSynapse {
                 id,
                 from,

@@ -97,8 +97,10 @@ impl Network {
 
     /// Applies a [`NeuronAdded`] event to the network state.
     fn apply_neuron_added(&mut self, event: &NeuronAdded) {
-        self.neurons
-            .insert(event.neuron_id, Neuron::with_id(event.neuron_id, event.activation));
+        self.neurons.insert(
+            event.neuron_id,
+            Neuron::with_id(event.neuron_id, event.activation),
+        );
     }
 
     /// Applies a [`NeuronRemoved`] event to the network state.

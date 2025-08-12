@@ -67,9 +67,7 @@ fn remove_neuron_removes_synapses() {
         .unwrap();
     assert!(handler.network.synapses.contains_key(&syn_id));
 
-    handler
-        .handle(Command::RemoveNeuron { id: id1 })
-        .unwrap();
+    handler.handle(Command::RemoveNeuron { id: id1 }).unwrap();
     assert!(!handler.network.neurons.contains_key(&id1));
     assert!(handler.network.synapses.is_empty());
 
@@ -94,13 +92,10 @@ fn event_replay_reconstructs_state() {
             activation: Activation::Identity,
         })
         .unwrap();
-    handler
-        .handle(Command::RemoveNeuron { id })
-        .unwrap();
+    handler.handle(Command::RemoveNeuron { id }).unwrap();
 
     let mut reader = FileEventStore::new(path);
     let events = reader.load().unwrap();
     let net = DomainNetwork::hydrate(&events);
     assert!(!net.neurons.contains_key(&id));
 }
-
