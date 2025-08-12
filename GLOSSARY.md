@@ -17,6 +17,9 @@ A read-only request for information handled separately from commands. See [src/a
 ### Event
 An immutable record describing a state change that occurred as a result of handling a command. Events are persisted to the event store and can be replayed to reconstruct state. See [src/domain/events.rs](src/domain/events.rs).
 
+### Event Type
+Label categorizing a memory entry, enabling queries for specific kinds of experiences.
+
 ### Event Store
 Persistent storage responsible for appending and loading domain events. Implementations live under [src/infrastructure/event_store.rs](src/infrastructure/event_store.rs).
 

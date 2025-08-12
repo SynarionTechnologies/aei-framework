@@ -13,6 +13,8 @@ pub enum MemoryQueryResult<'a> {
     Entries(Vec<&'a MemoryEntry>),
     /// Subset of entries.
     TopEntries(Vec<&'a MemoryEntry>),
+    /// Entries filtered by event type.
+    EntriesByEventType(Vec<&'a MemoryEntry>),
     /// Single entry lookup.
     Entry(Option<&'a MemoryEntry>),
 }
@@ -34,6 +36,11 @@ impl<'a> MemoryQueryHandler<'a> {
             MemoryQuery::GetMemoryState => MemoryQueryResult::Entries(self.projection.entries()),
             MemoryQuery::GetTopEntries { limit } => {
                 MemoryQueryResult::TopEntries(self.projection.top_entries(limit))
+            }
+            MemoryQuery::GetByEventType { event_type, limit } => {
+                MemoryQueryResult::EntriesByEventType(
+                    self.projection.entries_by_event_type(&event_type, limit),
+                )
             }
             MemoryQuery::GetEntryById { id } => MemoryQueryResult::Entry(self.projection.entry(id)),
         }

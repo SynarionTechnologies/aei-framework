@@ -43,4 +43,48 @@ impl MemoryProjection {
         entries.sort_by(|a, b| b.score.partial_cmp(&a.score).unwrap());
         entries.into_iter().take(limit).collect()
     }
+
+    /// Returns up to `limit` entries matching `event_type`, ordered by descending score.
+    ///
+    /// # Arguments
+    ///
+    /// * `event_type` - Type tag to filter entries by.
+    /// * `limit` - Maximum number of entries to return.
+    ///
+    /// # Returns
+    ///
+    /// A vector of references to memory entries sorted from highest to lowest score.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use aei_framework::domain::{MemoryEntry, MemoryEntryAdded, MemoryEvent};
+    /// use aei_framework::infrastructure::projection::MemoryProjection;
+    /// use chrono::Utc;
+    /// use uuid::Uuid;
+    ///
+    /// let events = vec![MemoryEvent::MemoryEntryAdded(MemoryEntryAdded {
+    ///     entry: MemoryEntry {
+    ///         id: Uuid::new_v4(),
+    ///         timestamp: Utc::now(),
+    ///         event_type: "demo".into(),
+    ///         payload: serde_json::json!({}),
+    ///         score: 0.4,
+    ///     },
+    /// })];
+    /// let projection = MemoryProjection::from_events(10, &events);
+    /// let entries = projection.entries_by_event_type("demo", 5);
+    /// assert_eq!(entries.len(), 1);
+    /// ```
+    #[must_use]
+    pub fn entries_by_event_type(&self, event_type: &str, limit: usize) -> Vec<&MemoryEntry> {
+        let mut entries: Vec<&MemoryEntry> = self
+            .memory
+            .entries
+            .iter()
+            .filter(|e| e.event_type == event_type)
+            .collect();
+        entries.sort_by(|a, b| b.score.partial_cmp(&a.score).unwrap());
+        entries.into_iter().take(limit).collect()
+    }
 }

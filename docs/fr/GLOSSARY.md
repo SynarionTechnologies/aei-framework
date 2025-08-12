@@ -17,6 +17,9 @@ Demande en lecture seule traitée séparément des commandes. Voir [src/applicat
 ### Événement
 Enregistrement immuable décrivant un changement d'état survenu suite au traitement d'une commande. Les événements sont persistés dans le magasin d'événements et peuvent être rejoués pour reconstruire l'état. Voir [src/domain/events.rs](../../src/domain/events.rs).
 
+### Type d'événement
+Étiquette catégorisant une entrée de mémoire, utilisée pour interroger des types d'expériences spécifiques.
+
 ### Magasin d'événements
 Stockage persistant chargé d'ajouter et de charger les événements de domaine. Les implémentations se trouvent dans [src/infrastructure/event_store.rs](../../src/infrastructure/event_store.rs).
 
