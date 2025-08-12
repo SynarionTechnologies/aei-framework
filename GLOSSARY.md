@@ -71,11 +71,23 @@ Command that creates a synapse between two randomly chosen neurons. Implemented 
 ### RemoveRandomSynapseCommand
 Command requesting the removal of a random synapse from the network. Implemented in [src/application/add_random_synapse.rs](src/application/remove_random_synapse.rs).
 
+### CreateNeuron Command
+Command that inserts a neuron with a specific identifier and activation into the network. Handled by `CommandHandler`.
+
+### RemoveNeuron Command
+Command that deletes a neuron by its identifier and prunes connected synapses. Handled by `CommandHandler`.
+
 ### MutateRandomSynapseWeightCommand
 Command that mutates the weight of a randomly selected synapse by adding Gaussian noise. Implemented in [src/application/mutate_random_synapse_weight.rs](src/application/mutate_random_synapse_weight.rs).
 
 ### SynapseWeightMutated
 Domain event recording a change in a synapse's weight. Emitted by `MutateRandomSynapseWeightHandler`.
+
+### NeuronAdded
+Domain event emitted when a neuron is added to the network. Result of `CreateNeuron`.
+
+### NeuronRemoved
+Domain event emitted when a neuron is removed from the network. Result of `RemoveNeuron`.
 
 ### Curiosity Score
 Metric representing the exploratory potential of a neuron or synapse. Recomputed via `RecalculateCuriosityScoreCommand` and stored through `CuriosityScoreUpdated` events.

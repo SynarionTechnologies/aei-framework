@@ -14,6 +14,10 @@ pub enum Event {
     RandomNeuronAdded(RandomNeuronAdded),
     /// A neuron was removed from the network.
     RandomNeuronRemoved(RandomNeuronRemoved),
+    /// A neuron was explicitly added to the network.
+    NeuronAdded(NeuronAdded),
+    /// A neuron was explicitly removed from the network.
+    NeuronRemoved(NeuronRemoved),
     /// A synapse connecting two neurons was created.
     SynapseCreated {
         id: Uuid,
@@ -47,6 +51,44 @@ pub struct RandomNeuronAdded {
 /// Event emitted when a random neuron is removed from the network.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct RandomNeuronRemoved {
+    /// Identifier of the removed neuron.
+    pub neuron_id: Uuid,
+}
+
+/// Event emitted when a neuron is added to the network.
+///
+/// # Examples
+///
+/// ```
+/// use aei_framework::{Activation, Event, NeuronAdded};
+/// use uuid::Uuid;
+///
+/// let id = Uuid::new_v4();
+/// let event = Event::NeuronAdded(NeuronAdded { neuron_id: id, activation: Activation::ReLU });
+/// # let _ = event;
+/// ```
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct NeuronAdded {
+    /// Identifier of the created neuron.
+    pub neuron_id: Uuid,
+    /// Activation assigned to the neuron.
+    pub activation: Activation,
+}
+
+/// Event emitted when a neuron is removed from the network.
+///
+/// # Examples
+///
+/// ```
+/// use aei_framework::{Event, NeuronRemoved};
+/// use uuid::Uuid;
+///
+/// let id = Uuid::new_v4();
+/// let event = Event::NeuronRemoved(NeuronRemoved { neuron_id: id });
+/// # let _ = event;
+/// ```
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct NeuronRemoved {
     /// Identifier of the removed neuron.
     pub neuron_id: Uuid,
 }
