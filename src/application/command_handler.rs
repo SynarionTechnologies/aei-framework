@@ -1,7 +1,7 @@
 //! Handles write-side commands and persists resulting events.
 
 use crate::application::Command;
-use crate::domain::{Event, Network};
+use crate::domain::{Event, Network, NeuronAdded, NeuronRemoved};
 use crate::infrastructure::EventStore;
 
 /// Processes commands, emitting events and updating the in-memory state.
@@ -23,6 +23,15 @@ impl<S: EventStore> CommandHandler<S> {
     /// Handles a command by converting it to an event and applying it.
     pub fn handle(&mut self, command: Command) -> Result<(), S::Error> {
         let event = match command {
+            Command::CreateNeuron { id, activation } => {
+                Event::NeuronAdded(NeuronAdded {
+                    neuron_id: id,
+                    activation,
+                })
+            }
+            Command::RemoveNeuron { id } => {
+                Event::NeuronRemoved(NeuronRemoved { neuron_id: id })
+            }
             Command::CreateSynapse {
                 id,
                 from,

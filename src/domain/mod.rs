@@ -9,8 +9,9 @@ mod synapse;
 
 pub use activation::Activation;
 pub use events::{
-    CuriosityScoreUpdated, Event, NeuronActivationMutated, RandomNeuronAdded, RandomNeuronRemoved,
-    RandomSynapseAdded, RandomSynapseRemoved, SynapseWeightMutated,
+    CuriosityScoreUpdated, Event, NeuronActivationMutated, NeuronAdded, NeuronRemoved,
+    RandomNeuronAdded, RandomNeuronRemoved, RandomSynapseAdded, RandomSynapseRemoved,
+    SynapseWeightMutated,
 };
 pub use memory::{
     AdaptiveMemory, MemoryEntry, MemoryEntryAdded, MemoryEntryRemoved, MemoryEvent, MemoryPruned,

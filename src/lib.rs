@@ -24,8 +24,8 @@ pub use application::{
 pub use domain::{
     Activation, AdaptiveMemory, CuriosityScoreUpdated, Event, MemoryEntry, MemoryEntryAdded,
     MemoryEntryRemoved, MemoryEvent, MemoryPruned, MemoryScoreUpdated, Network as DomainNetwork,
-    Neuron, NeuronActivationMutated, RandomNeuronAdded, RandomNeuronRemoved, RandomSynapseAdded,
-    RandomSynapseRemoved, Synapse, SynapseWeightMutated,
+    Neuron, NeuronActivationMutated, NeuronAdded, NeuronRemoved, RandomNeuronAdded,
+    RandomNeuronRemoved, RandomSynapseAdded, RandomSynapseRemoved, Synapse, SynapseWeightMutated,
 };
 pub use infrastructure::{
     EventStore, FileEventStore, FileMemoryEventStore, JsonlEventStore, MemoryEventStore,

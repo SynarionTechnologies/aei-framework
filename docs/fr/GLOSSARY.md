@@ -68,11 +68,23 @@ Commande qui crée une synapse entre deux neurones choisis aléatoirement. Impl�
 ### RemoveRandomSynapseCommand
 Commande demandant la suppression d'une synapse aléatoire du réseau. Implémentée dans [src/application/remove_random_synapse.rs](../../src/application/remove_random_synapse.rs).
 
+### CreateNeuron Command
+Commande qui insère un neurone avec un identifiant et une activation spécifiques dans le réseau. Gérée par `CommandHandler`.
+
+### RemoveNeuron Command
+Commande qui supprime un neurone par son identifiant et élimine les synapses associées. Gérée par `CommandHandler`.
+
 ### MutateRandomSynapseWeightCommand
 Commande qui applique un bruit gaussien au poids d'une synapse choisie aléatoirement. Implémentée dans [src/application/mutate_random_synapse_weight.rs](../../src/application/mutate_random_synapse_weight.rs).
 
 ### SynapseWeightMutated
 Événement de domaine enregistrant la modification du poids d'une synapse. Émis par `MutateRandomSynapseWeightHandler`.
+
+### NeuronAdded
+Événement de domaine émis lorsqu'un neurone est ajouté au réseau, suite à `CreateNeuron`.
+
+### NeuronRemoved
+Événement de domaine émis lorsqu'un neurone est retiré du réseau, suite à `RemoveNeuron`.
 
 ### Activation
 Fonction non linéaire appliquée à l'entrée d'un neurone pour produire sa sortie.
