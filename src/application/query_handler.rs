@@ -77,9 +77,9 @@ impl<'a> QueryHandler<'a> {
             Query::GetNeuronActivation { id } => {
                 QueryResult::Activation(self.network.activation(id))
             }
-            Query::GetCuriosityScore { id } => QueryResult::CuriosityScore(
-                self.curiosity.and_then(|c| c.get(id)),
-            ),
+            Query::GetCuriosityScore { id } => {
+                QueryResult::CuriosityScore(self.curiosity.and_then(|c| c.get(id)))
+            }
         }
     }
 
