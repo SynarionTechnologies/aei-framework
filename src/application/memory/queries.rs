@@ -9,6 +9,8 @@ pub enum MemoryQuery {
     GetMemoryState,
     /// Retrieve the top `limit` entries by score.
     GetTopEntries { limit: usize },
+    /// Retrieve up to `limit` entries matching `event_type`.
+    GetByEventType { event_type: String, limit: usize },
     /// Retrieve a single entry by identifier.
     GetEntryById { id: Uuid },
 }

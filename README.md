@@ -170,7 +170,10 @@ let mut store = handler.base.store;
 let events = store.load().unwrap();
 let projection = MemoryProjection::from_events(50, &events);
 let qh = MemoryQueryHandler::new(&projection);
-let _entries = qh.handle(MemoryQuery::GetMemoryState);
+let _entries = qh.handle(MemoryQuery::GetByEventType {
+    event_type: "interaction".into(),
+    limit: 10,
+});
 ```
 
 ## Logging

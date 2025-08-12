@@ -1,7 +1,7 @@
 use aei_framework::application::memory::{
     AddMemoryEntryCommand, AddMemoryEntryHandler, MemoryQuery, MemoryQueryHandler,
-    RemoveMemoryEntryCommand, RemoveMemoryEntryHandler, UpdateMemoryScoreCommand,
-    UpdateMemoryScoreHandler,
+    MemoryQueryResult, RemoveMemoryEntryCommand, RemoveMemoryEntryHandler,
+    UpdateMemoryScoreCommand, UpdateMemoryScoreHandler,
 };
 use aei_framework::domain::{AdaptiveMemory, MemoryEntry, MemoryEntryAdded, MemoryEvent};
 use aei_framework::infrastructure::projection::MemoryProjection;
@@ -176,4 +176,63 @@ fn top_entries_returns_highest_scores_in_descending_order() {
     let top = projection.top_entries(2);
     assert_eq!(top.len(), 2);
     assert!(top[0].score > top[1].score);
+}
+
+#[test]
+fn get_by_event_type_returns_limited_entries_in_score_order() {
+    use chrono::Utc;
+    use uuid::Uuid;
+
+    let events = vec![
+        MemoryEvent::MemoryEntryAdded(MemoryEntryAdded {
+            entry: MemoryEntry {
+                id: Uuid::new_v4(),
+                timestamp: Utc::now(),
+                event_type: "a".into(),
+                payload: json!({}),
+                score: 0.3,
+            },
+        }),
+        MemoryEvent::MemoryEntryAdded(MemoryEntryAdded {
+            entry: MemoryEntry {
+                id: Uuid::new_v4(),
+                timestamp: Utc::now(),
+                event_type: "a".into(),
+                payload: json!({}),
+                score: 0.8,
+            },
+        }),
+        MemoryEvent::MemoryEntryAdded(MemoryEntryAdded {
+            entry: MemoryEntry {
+                id: Uuid::new_v4(),
+                timestamp: Utc::now(),
+                event_type: "a".into(),
+                payload: json!({}),
+                score: 0.5,
+            },
+        }),
+        MemoryEvent::MemoryEntryAdded(MemoryEntryAdded {
+            entry: MemoryEntry {
+                id: Uuid::new_v4(),
+                timestamp: Utc::now(),
+                event_type: "b".into(),
+                payload: json!({}),
+                score: 0.9,
+            },
+        }),
+    ];
+
+    let projection = MemoryProjection::from_events(10, &events);
+    let handler = MemoryQueryHandler::new(&projection);
+    match handler.handle(MemoryQuery::GetByEventType {
+        event_type: "a".into(),
+        limit: 2,
+    }) {
+        MemoryQueryResult::EntriesByEventType(entries) => {
+            assert_eq!(entries.len(), 2);
+            assert!(entries.iter().all(|e| e.event_type == "a"));
+            assert!(entries[0].score >= entries[1].score);
+        }
+        _ => panic!("unexpected query result"),
+    }
 }
