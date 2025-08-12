@@ -15,4 +15,6 @@ pub enum Query {
     GetSynapse { id: Uuid },
     /// Fetch the activation function of a neuron by identifier.
     GetNeuronActivation { id: Uuid },
+    /// Fetch the curiosity score for a neuron or synapse by identifier.
+    GetCuriosityScore { id: Uuid },
 }
