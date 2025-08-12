@@ -80,6 +80,12 @@ Commande qui applique un bruit gaussien au poids d'une synapse choisie aléatoir
 ### SynapseWeightMutated
 Événement de domaine enregistrant la modification du poids d'une synapse. Émis par `MutateRandomSynapseWeightHandler`.
 
+### SetSynapseWeightCommand
+Commande qui assigne un poids spécifique à une synapse existante. Implémentée dans [src/application/set_synapse_weight.rs](../../src/application/set_synapse_weight.rs).
+
+### SynapseWeightSet
+Événement de domaine enregistrant la mise à jour explicite du poids d'une synapse. Émis par `SetSynapseWeightHandler`.
+
 ### NeuronAdded
 Événement de domaine émis lorsqu'un neurone est ajouté au réseau, suite à `CreateNeuron`.
 

@@ -8,7 +8,7 @@ use std::collections::HashMap;
 use super::events::{
     CuriosityScoreUpdated, Event, NeuronActivationMutated, NeuronAdded, NeuronRemoved,
     RandomNeuronAdded, RandomNeuronRemoved, RandomSynapseAdded, RandomSynapseRemoved,
-    SynapseWeightMutated,
+    SynapseWeightMutated, SynapseWeightSet,
 };
 use super::{Neuron, Synapse};
 use uuid::Uuid;
@@ -70,6 +70,9 @@ impl Network {
             }
             Event::SynapseWeightMutated(e) => {
                 self.apply_synapse_weight_mutated(e);
+            }
+            Event::SynapseWeightSet(e) => {
+                self.apply_synapse_weight_set(e);
             }
             Event::NeuronActivationMutated(e) => {
                 self.apply_neuron_activation_mutated(e);
@@ -134,6 +137,13 @@ impl Network {
 
     /// Applies a [`SynapseWeightMutated`] event to the network state.
     fn apply_synapse_weight_mutated(&mut self, event: &SynapseWeightMutated) {
+        if let Some(synapse) = self.synapses.get_mut(&event.synapse_id) {
+            synapse.weight = event.new_weight;
+        }
+    }
+
+    /// Applies a [`SynapseWeightSet`] event to the network state.
+    fn apply_synapse_weight_set(&mut self, event: &SynapseWeightSet) {
         if let Some(synapse) = self.synapses.get_mut(&event.synapse_id) {
             synapse.weight = event.new_weight;
         }

@@ -33,6 +33,8 @@ pub enum Event {
     RandomSynapseRemoved(RandomSynapseRemoved),
     /// The weight of an existing synapse was mutated.
     SynapseWeightMutated(SynapseWeightMutated),
+    /// The weight of an existing synapse was explicitly set.
+    SynapseWeightSet(SynapseWeightSet),
     /// The activation function of a neuron was mutated.
     NeuronActivationMutated(NeuronActivationMutated),
     /// The curiosity score of a neuron or synapse was updated.
@@ -121,6 +123,32 @@ pub struct SynapseWeightMutated {
     /// Previous weight of the synapse before mutation.
     pub old_weight: f64,
     /// Newly assigned weight after mutation.
+    pub new_weight: f64,
+}
+
+/// Event emitted when the weight of a synapse is set explicitly.
+///
+/// # Examples
+///
+/// ```
+/// use aei_framework::{Event, SynapseWeightSet};
+/// use uuid::Uuid;
+///
+/// let id = Uuid::new_v4();
+/// let event = Event::SynapseWeightSet(SynapseWeightSet {
+///     synapse_id: id,
+///     old_weight: 0.2,
+///     new_weight: 0.5,
+/// });
+/// # let _ = event;
+/// ```
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct SynapseWeightSet {
+    /// Identifier of the updated synapse.
+    pub synapse_id: Uuid,
+    /// Previous weight of the synapse before the update.
+    pub old_weight: f64,
+    /// New weight assigned to the synapse.
     pub new_weight: f64,
 }
 

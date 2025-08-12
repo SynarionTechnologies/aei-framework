@@ -107,6 +107,22 @@ if let Ok(removed_id) = handler.handle(RemoveRandomSynapseCommand) {
 }
 ```
 
+## Set Synapse Weight
+
+Assign a precise weight to an existing synapse:
+
+```rust
+use aei_framework::{SetSynapseWeightCommand, SetSynapseWeightHandler, FileEventStore};
+use std::path::PathBuf;
+
+let store = FileEventStore::new(PathBuf::from("events.log"));
+let mut handler = SetSynapseWeightHandler::new(store).unwrap();
+let synapse_id = uuid::Uuid::new_v4(); // existing synapse identifier
+handler
+    .handle(SetSynapseWeightCommand { synapse_id, new_weight: 0.5 })
+    .unwrap();
+```
+
 ## Random Synapse Weight Mutation
 
 Adjust a synapse's weight by adding Gaussian noise:

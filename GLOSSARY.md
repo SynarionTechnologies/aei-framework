@@ -83,6 +83,12 @@ Command that mutates the weight of a randomly selected synapse by adding Gaussia
 ### SynapseWeightMutated
 Domain event recording a change in a synapse's weight. Emitted by `MutateRandomSynapseWeightHandler`.
 
+### SetSynapseWeightCommand
+Command that assigns a specific weight to an existing synapse. Implemented in [src/application/set_synapse_weight.rs](src/application/set_synapse_weight.rs).
+
+### SynapseWeightSet
+Domain event recording an explicit update of a synapse's weight. Emitted by `SetSynapseWeightHandler`.
+
 ### NeuronAdded
 Domain event emitted when a neuron is added to the network. Result of `CreateNeuron`.
 

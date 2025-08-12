@@ -20,12 +20,14 @@ pub use application::{
     QueryHandler, QueryResult, RecalculateCuriosityScoreCommand, RecalculateCuriosityScoreHandler,
     RemoveRandomNeuronCommand, RemoveRandomNeuronError, RemoveRandomNeuronHandler,
     RemoveRandomSynapseCommand, RemoveRandomSynapseError, RemoveRandomSynapseHandler,
+    SetSynapseWeightCommand, SetSynapseWeightError, SetSynapseWeightHandler,
 };
 pub use domain::{
     Activation, AdaptiveMemory, CuriosityScoreUpdated, Event, MemoryEntry, MemoryEntryAdded,
     MemoryEntryRemoved, MemoryEvent, MemoryPruned, MemoryScoreUpdated, Network as DomainNetwork,
     Neuron, NeuronActivationMutated, NeuronAdded, NeuronRemoved, RandomNeuronAdded,
     RandomNeuronRemoved, RandomSynapseAdded, RandomSynapseRemoved, Synapse, SynapseWeightMutated,
+    SynapseWeightSet,
 };
 pub use infrastructure::{
     EventStore, FileEventStore, FileMemoryEventStore, JsonlEventStore, MemoryEventStore,

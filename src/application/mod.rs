@@ -13,6 +13,7 @@ mod query_handler;
 mod recalculate_curiosity_score;
 mod remove_random_neuron;
 mod remove_random_synapse;
+mod set_synapse_weight;
 
 pub use add_random_neuron::{AddRandomNeuronCommand, AddRandomNeuronError, AddRandomNeuronHandler};
 pub use add_random_synapse::{
@@ -39,4 +40,7 @@ pub use remove_random_neuron::{
 };
 pub use remove_random_synapse::{
     RemoveRandomSynapseCommand, RemoveRandomSynapseError, RemoveRandomSynapseHandler,
+};
+pub use set_synapse_weight::{
+    SetSynapseWeightCommand, SetSynapseWeightError, SetSynapseWeightHandler,
 };
