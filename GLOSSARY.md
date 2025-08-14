@@ -8,6 +8,24 @@ The Autonomous & Evolutive Intelligence Framework, a Rust library for building d
 ### Domain-Driven Design (DDD)
 An approach to software development that models complex domains in terms of bounded contexts and ubiquitous language.
 
+### MemoryStore
+Abstraction for CRUD operations on memory items.
+
+### MemoryIndex
+Component providing vector-based search over memory items.
+
+### RetentionPolicy
+Strategy determining whether memory items are kept, archived, or deleted.
+
+### Compactor
+Reduces storage usage by merging or removing memory items.
+
+### Scheduler
+Plans recurring tasks executed on manual ticks.
+
+### EventBus
+In-process publish/subscribe mechanism for events.
+
 ### Command
 An intent to change state in the system. Commands are handled by dedicated command handlers and produce events when successful. See [src/application/commands.rs](src/application/commands.rs).
 

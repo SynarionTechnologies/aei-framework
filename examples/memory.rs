@@ -18,7 +18,7 @@ use uuid::Uuid;
 /// Runs the memory example.
 fn main() {
     env_logger::init();
-    let path = std::env::temp_dir().join(format!("aei_memory_{}.log", Uuid::new_v4()));
+    let path = std::env::temp_dir().join(format!("aei_framework_memory_{}.log", Uuid::new_v4()));
     let store = FileMemoryEventStore::new(path.clone());
 
     // Insert a new memory entry.
