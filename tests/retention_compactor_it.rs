@@ -1,4 +1,4 @@
-use aei_memory::{
+use aei_framework::core::memory::{
     Compactor, InMemoryStore, MemoryItem, NoopCompactor, RetentionAction, RetentionPolicy,
     TtlRetentionPolicy,
 };

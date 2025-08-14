@@ -4,7 +4,7 @@ use crossbeam_channel::{unbounded, Receiver, Sender};
 ///
 /// # Examples
 /// ```
-/// use aei_runtime::event_bus::{EventBus, InMemoryEventBus};
+/// use aei_framework::core::event_bus::{EventBus, InMemoryEventBus};
 /// let mut bus: InMemoryEventBus<u32> = InMemoryEventBus::new();
 /// let rx = bus.subscribe();
 /// bus.publish(1);
@@ -22,12 +22,18 @@ pub struct InMemoryEventBus<T: Clone + Send + 'static> {
     subscribers: Vec<Sender<T>>,
 }
 
-impl<T: Clone + Send + 'static> InMemoryEventBus<T> {
-    /// Creates a new empty bus.
-    pub fn new() -> Self {
+impl<T: Clone + Send + 'static> Default for InMemoryEventBus<T> {
+    fn default() -> Self {
         Self {
             subscribers: Vec::new(),
         }
+    }
+}
+
+impl<T: Clone + Send + 'static> InMemoryEventBus<T> {
+    /// Creates a new empty bus.
+    pub fn new() -> Self {
+        Self::default()
     }
 }
 

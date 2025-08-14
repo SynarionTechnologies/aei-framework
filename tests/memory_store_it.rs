@@ -1,4 +1,6 @@
-use aei_memory::{InMemoryIndex, InMemoryStore, MemoryIndex, MemoryItem, MemoryStore};
+use aei_framework::core::memory::{
+    InMemoryIndex, InMemoryStore, MemoryIndex, MemoryItem, MemoryStore,
+};
 
 #[test]
 fn store_crud_and_search() {

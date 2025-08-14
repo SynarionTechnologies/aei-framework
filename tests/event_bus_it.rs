@@ -1,4 +1,4 @@
-use aei_runtime::event_bus::{EventBus, InMemoryEventBus};
+use aei_framework::core::event_bus::{EventBus, InMemoryEventBus};
 
 #[test]
 fn subscriber_receives_published_event() {

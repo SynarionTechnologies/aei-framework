@@ -1,6 +1,6 @@
 # Memory Interfaces
 
-The `aei-memory` crate defines several abstractions for generic memory management:
+The `core::memory` module defines several abstractions for generic memory management:
 
 - `MemoryStore` for CRUD persistence of `MemoryItem` objects.
 - `MemoryIndex` for vector-based search.
@@ -10,7 +10,7 @@ The `aei-memory` crate defines several abstractions for generic memory managemen
 ## Example
 
 ```rust
-use aei_memory::{InMemoryStore, MemoryItem, MemoryStore};
+use aei_framework::core::memory::{InMemoryStore, MemoryItem, MemoryStore};
 
 let mut store = InMemoryStore::new();
 let id = store.append(MemoryItem::new("Hello"))?;

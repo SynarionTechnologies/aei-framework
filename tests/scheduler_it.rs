@@ -2,7 +2,7 @@ use std::sync::atomic::{AtomicUsize, Ordering};
 use std::sync::Arc;
 use std::time::Duration;
 
-use aei_runtime::scheduler::{InMemoryScheduler, Scheduler};
+use aei_framework::core::scheduler::{InMemoryScheduler, Scheduler};
 
 #[test]
 fn scheduled_task_runs_on_tick() {

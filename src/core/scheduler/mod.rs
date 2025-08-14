@@ -1,10 +1,12 @@
+//! Task scheduling utilities.
+
 use std::time::{Duration, Instant};
 
 /// Schedules recurring tasks.
 ///
 /// # Examples
 /// ```
-/// use aei_runtime::scheduler::{InMemoryScheduler, Scheduler};
+/// use aei_framework::core::scheduler::{InMemoryScheduler, Scheduler};
 /// use std::sync::atomic::{AtomicUsize, Ordering};
 /// use std::sync::Arc;
 /// use std::time::Duration;
@@ -24,15 +26,19 @@ pub trait Scheduler {
     fn tick(&mut self);
 }
 
+/// Entry in the scheduler's task list.
+type Task = (Instant, Duration, Box<dyn FnMut() + Send>);
+
 /// In-memory scheduler running tasks on manual ticks.
+#[derive(Default)]
 pub struct InMemoryScheduler {
-    tasks: Vec<(Instant, Duration, Box<dyn FnMut() + Send>)>,
+    tasks: Vec<Task>,
 }
 
 impl InMemoryScheduler {
     /// Creates an empty scheduler.
     pub fn new() -> Self {
-        Self { tasks: Vec::new() }
+        Self::default()
     }
 }
 

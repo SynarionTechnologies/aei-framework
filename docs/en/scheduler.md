@@ -3,7 +3,7 @@
 The scheduler module registers tasks that run at fixed intervals. Tasks execute when `tick()` is called.
 
 ```rust
-use aei_runtime::scheduler::{InMemoryScheduler, Scheduler};
+use aei_framework::core::scheduler::{InMemoryScheduler, Scheduler};
 use std::time::Duration;
 
 let mut sched = InMemoryScheduler::new();

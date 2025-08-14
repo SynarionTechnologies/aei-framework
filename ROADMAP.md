@@ -43,7 +43,7 @@ _Autonomous & Evolutive Intelligence Framework (AEIF)_
 
 ## Phase 3 — Persistence & Memory Abstraction
 
-- [ ] **`crates/memory`:**
+- [ ] **memory module:**
   - `MemoryStore` trait: put/get/save/load pattern
   - In-memory backend (HashMap)
   - File-based backend (JSON/YAML/TOML)

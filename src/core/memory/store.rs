@@ -24,7 +24,7 @@ impl MemoryItem {
     ///
     /// # Examples
     /// ```
-    /// use aei_memory::MemoryItem;
+    /// use aei_framework::core::memory::MemoryItem;
     /// let item = MemoryItem::new("Hello");
     /// assert_eq!(item.content, "Hello");
     /// ```
