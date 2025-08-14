@@ -1,8 +1,0 @@
-[package]
-name = "aei-memory"
-version = "0.1.0"
-edition = "2021"
-description = "Memory abstractions and persistence mechanisms for ACUs."
-license = "MPL-2.0"
-
-[dependencies]
