@@ -6,3 +6,7 @@ description = "Memory abstractions and persistence mechanisms for ACUs."
 license = "MPL-2.0"
 
 [dependencies]
+uuid = { version = "1.8", features = ["v4", "serde"] }
+serde = { version = "1.0", features = ["derive"] }
+chrono = { version = "0.4", features = ["serde"] }
+thiserror = "1.0"

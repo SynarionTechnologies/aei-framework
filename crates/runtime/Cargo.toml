@@ -6,3 +6,4 @@ description = "Agent runtime responsible for scheduling and orchestration."
 license = "MPL-2.0"
 
 [dependencies]
+crossbeam-channel = "0.5"

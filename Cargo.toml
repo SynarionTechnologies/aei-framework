@@ -8,7 +8,6 @@ publish = false
 
 [workspace]
 members = [
-    "crates/core",
     "crates/memory",
     "crates/runtime",
     "crates/utils",
@@ -27,3 +26,5 @@ chrono = { version = "0.4", features = ["serde"] }
 [dev-dependencies]
 env_logger = "0.10"
 rand_chacha = "0.3"
+aei-memory = { path = "crates/memory" }
+aei-runtime = { path = "crates/runtime" }

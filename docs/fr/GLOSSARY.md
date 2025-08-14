@@ -106,3 +106,21 @@ Modèle de lecture associant des identifiants aux scores de curiosité. Voir [sr
 
 ### Requête GetCuriosityScore
 Requête récupérant le score de curiosité d'un neurone ou d'une synapse via [`QueryHandler`](../../src/application/query_handler.rs).
+
+### MemoryStore
+Abstraction de stockage CRUD pour les éléments de mémoire.
+
+### MemoryIndex
+Fournit une recherche vectorielle sur les éléments de mémoire.
+
+### RetentionPolicy
+Stratégie déterminant si les éléments de mémoire doivent être conservés, archivés ou supprimés.
+
+### Compactor
+Composant réduisant l'espace de stockage en fusionnant ou supprimant des éléments.
+
+### Scheduler
+Planificateur de tâches récurrentes exécutées lors des ticks.
+
+### EventBus
+Mécanisme interne de publication/abonnement pour les événements.
