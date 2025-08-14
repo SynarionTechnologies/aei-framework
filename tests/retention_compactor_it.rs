@@ -15,6 +15,6 @@ fn ttl_retention_deletes_old_items() {
 #[test]
 fn noop_compactor_runs_without_error() {
     let mut store = InMemoryStore::new();
-    let mut compactor = NoopCompactor::default();
+    let mut compactor = NoopCompactor;
     compactor.compact(&mut store).unwrap();
 }
